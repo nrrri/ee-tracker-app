@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model CandidatePool {
+  id              Int      @id @default(autoincrement())
+  drawId          Int
+  poolDate        DateTime                      // drawDistributionAsOn
+
+  range601_1200   Int                               // dd1
+  range501_600    Int                               // dd2
+  range451_500    Int                               // dd3
+  range491_500    Int                               // dd4
+  range481_490    Int                               // dd5
+  range471_480    Int                               // dd6
+  range461_470    Int                               // dd7
+  range451_460    Int                               // dd8
+  range401_450    Int                               // dd9
+  range441_450    Int                               // dd10
+  range431_440    Int                               // dd11
+  range421_430    Int                               // dd12
+  range411_420    Int                               // dd13
+  range401_410    Int                               // dd14
+  range351_400    Int                               // dd15
+  range301_350    Int                               // dd16
+  range0_300      Int                               // dd17
+  totalCandidates Int                               // dd18
+  draws           Draw[] 
+}
+
+model Draw {
+  id             Int      @id @default(autoincrement())
+  drawNumber     Int      @unique
+  drawDateTime   DateTime
+  drawName       String?
+  drawSize       Int?
+  drawCRS        Int?
+  mitext         String?                     // full text link
+  drawText1      String?                     // ministerial instruction link
+  drawText2      String?                     // program description
+  drawCutOff     DateTime?
+  candidatePool  CandidatePool? @relation(fields: [poolId], references: [id])
+  poolId         Int?
+}
