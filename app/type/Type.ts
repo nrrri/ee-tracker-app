@@ -55,3 +55,26 @@ export type PoolData = {
   range0_300: number; // dd17
   totalCandidates: number; // dd18
 };
+
+export type InvitationData = {
+  drawNumber: string;
+  drawNumberURL: string;
+  drawDate: string;
+  drawDateFull: string;
+  drawName: string;
+  drawSize: string;
+  drawCRS: string;
+  mitext: string;
+  DrawText1: string;
+  drawText2: string;
+  drawDateTime: string;
+  drawCutOff: string;
+  drawDistributionAsOn: string;
+};
+
+export type TooltipProps = {
+  active?: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  payload?: any[];
+  label?: string;
+};
