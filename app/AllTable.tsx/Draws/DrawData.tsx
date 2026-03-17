@@ -1,3 +1,4 @@
+"use client";
 import { InvitationData } from "@/app/type/Type";
 import DrawTable from "./DrawTable";
 import { HeaderToggle } from "@/components/HeaderToggle";
@@ -17,9 +18,8 @@ export default function DrawData({ drawData }: DrawDataType) {
             {/* Details */}
             <div>
                 {openTable ?
-                <DrawTable drawData={drawData} /> :
-                    <DrawChart drawData={drawData} />
-            }
+                    <DrawTable drawData={drawData} /> : <DrawChart drawData={drawData} />
+                }
             </div>
         </div>
     )

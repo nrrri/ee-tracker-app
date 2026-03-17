@@ -1,20 +1,18 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client"
 
 import { CustomTooltip } from "@/components/CustomTooltip"
 import { InvitationData } from "../../type/Type"
 import { ChartContainer, ChartTooltip, type ChartConfig } from "@/components/ui/chart"
 import { Bar, BarChart, CartesianGrid, Cell, LabelList, XAxis, YAxis } from "recharts"
-import { keywordColors, keywordDrawType } from "@/app/constant"
+import { keywordColors } from "@/app/constant"
 import { useEffect, useState } from "react"
-import { CheckboxBasic } from "@/components/CheckboxBasic"
+import FilterBox from "./FilterBox"
 
 type DrawChartType = {
     drawData: InvitationData[]
 }
 export default function DrawChart({ drawData }: DrawChartType) {
     const [addFilterType, setAddFilterType] = useState<string[]>([]);
-    const [checked, setChecked] = useState(false)
     const [filterData, setFilterData] = useState<InvitationData[]>(drawData)
     const chartConfig = {
         desktop: {
@@ -57,15 +55,6 @@ export default function DrawChart({ drawData }: DrawChartType) {
         return keyword ? keywordColors[keyword] : "#FC4024"
     }
 
-    // add draw type to filter
-    const toggleFilter = (value: string) => {
-        setAddFilterType(prev =>
-            prev.includes(value)
-                ? prev.filter(v => v !== value)
-                : [...prev, value]
-        )
-    }
-
     useEffect(() => {
         if (addFilterType.length > 0) {
             setFilterData(filterByCategory(drawData))
@@ -77,22 +66,9 @@ export default function DrawChart({ drawData }: DrawChartType) {
 
     return (
         <div className="">
-            {/* todo: add filter feature */}
-            <div className="grid grid-cols-3">
-                {/* todo: refactor */}
-                <CheckboxBasic title={keywordDrawType.cec} checked={addFilterType.includes(keywordDrawType.cec)} onCheckedChange={() => toggleFilter(keywordDrawType.cec)} />
-                <CheckboxBasic title={keywordDrawType.provincial} checked={addFilterType.includes(keywordDrawType.provincial)} onCheckedChange={() => toggleFilter(keywordDrawType.provincial)} />
-                <CheckboxBasic title={keywordDrawType.french} checked={addFilterType.includes(keywordDrawType.french)} onCheckedChange={() => toggleFilter(keywordDrawType.french)} />
-                <CheckboxBasic title={keywordDrawType.healthcare} checked={addFilterType.includes(keywordDrawType.healthcare)} onCheckedChange={() => toggleFilter(keywordDrawType.healthcare)} />
-                <CheckboxBasic title={keywordDrawType.stem} checked={addFilterType.includes(keywordDrawType.stem)} onCheckedChange={() => toggleFilter(keywordDrawType.stem)} />
-                <CheckboxBasic title={keywordDrawType.trade} checked={addFilterType.includes(keywordDrawType.trade)} onCheckedChange={() => toggleFilter(keywordDrawType.trade)} />
-                <CheckboxBasic title={keywordDrawType.education} checked={addFilterType.includes(keywordDrawType.education)} onCheckedChange={() => toggleFilter(keywordDrawType.education)} />
-                <CheckboxBasic title={keywordDrawType.transport} checked={addFilterType.includes(keywordDrawType.transport)} onCheckedChange={() => toggleFilter(keywordDrawType.transport)} />
-                <CheckboxBasic title={keywordDrawType.physicians} checked={addFilterType.includes(keywordDrawType.physicians)} onCheckedChange={() => toggleFilter(keywordDrawType.physicians)} />
-                <CheckboxBasic title={keywordDrawType.senior} checked={addFilterType.includes(keywordDrawType.senior)} onCheckedChange={() => toggleFilter(keywordDrawType.senior)} />
-                <CheckboxBasic title={keywordDrawType.researchers} checked={addFilterType.includes(keywordDrawType.researchers)} onCheckedChange={() => toggleFilter(keywordDrawType.researchers)} />
-                <CheckboxBasic title={keywordDrawType.military} checked={addFilterType.includes(keywordDrawType.military)} onCheckedChange={() => toggleFilter(keywordDrawType.military)} />
-            </div>
+            {/* todo: move to a new component */}
+            <FilterBox setAddFilterType={setAddFilterType} addFilterType={addFilterType} />
+
             {/* Chart */}
             <div>
                 <ChartContainer config={chartConfig} className="min-h-50 w-full">

@@ -7,7 +7,7 @@ type CheckboxType = {
 }
 export function CheckboxBasic({ title, checked, onCheckedChange }: CheckboxType) {
     return (
-        <FieldGroup className="mx-auto w-56">
+        <FieldGroup className="mx-auto w-72">
             <Field orientation="horizontal">
                 <Checkbox id="terms-checkbox-basic" name="terms-checkbox-basic" checked={checked}
                     onCheckedChange={onCheckedChange} />

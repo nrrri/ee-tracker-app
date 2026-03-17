@@ -88,13 +88,13 @@ export default function AllTable({ tableType }: AllTableType) {
     }, [data])
 
     return (
-        <>
-            {tableType ? <div>
+        <div>
+            {tableType ?
                 <DrawData drawData={drawData} />
-            </div> :
+                :
                 <CandidateData poolData={poolData} />
             }
-        </>
+        </div>
     );
 }
 
