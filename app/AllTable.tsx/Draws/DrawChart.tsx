@@ -58,9 +58,7 @@ export default function DrawChart({ drawData }: DrawChartType) {
 
     return (
         <div className="">
-            {/* todo: move to a new component */}
             <FilterBox setAddFilterType={setAddFilterType} addFilterType={addFilterType} />
-
             {/* Chart */}
             <div className="overflow-x-auto w-full h-300">
                 <div
