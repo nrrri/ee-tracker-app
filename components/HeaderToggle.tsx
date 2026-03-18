@@ -13,11 +13,9 @@ export function HeaderToggle({
     onToggle,
 }: HeaderTableProps) {
     return (
-        <div className="flex items-center justify-between mr-8">
+        <div className="flex items-center justify-between mx-8">
             <div />
-
             <div className="m-8 text-3xl">{title}</div>
-
             <div className="flex gap-2">
                 <Button variant="outline" size="icon" onClick={onToggle}>
                     {openTable ? <ChartSpline /> : <Table2 />}

@@ -1,4 +1,5 @@
 "use client";
+import { getColorFromName } from "@/app/constant";
 import { InvitationData } from "../../type/Type";
 
 type DrawTableType = {
@@ -27,13 +28,13 @@ export default function DrawTable({ drawData }: DrawTableType) {
                             : "";
 
                     const borderClass = checkRange && currYear !== prevYear ? "border-b-4 border-b-black" : "border-0";
-
+                    
                     return (
-                        <tr key={draw.drawNumber} className={`hover:bg-gray-100 ${borderClass}`}>
+                        <tr key={draw.drawNumber} className={`hover:bg-gray-100 ${borderClass}`} style={{ borderLeft: 1 }}>
                             <td className={StyledBodyTable}>{draw.drawNumber}</td>
                             <td className={StyledBodyTable}>{draw.drawDateFull}</td>
-                            <td className={StyledBodyTable}>{draw.drawName}</td>
-                            <td className={StyledBodyTable}>{draw.drawSize}</td>
+                            <td style={{ borderLeftColor: getColorFromName(draw.drawName) }} className={`${StyledBodyTable} border-l-30`}>{draw.drawName}</td>
+                            <td className={StyledBodyTable}>{draw.drawSize.toLocaleString()}</td>
                             <td className={StyledBodyTable}>{draw.drawCRS}</td>
                         </tr>
                     );

@@ -33,7 +33,6 @@ export default function CandidateChart({ poolData }: CandidateChartType) {
             year: "numeric",
         }),
     }));
-    console.log('formattedDate', formattedDate)
     return (
         <div className="">
             <div>

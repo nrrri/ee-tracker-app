@@ -62,7 +62,7 @@ export type InvitationData = {
   drawDate: string;
   drawDateFull: string;
   drawName: string;
-  drawSize: string;
+  drawSize: number;
   drawCRS: string;
   mitext: string;
   DrawText1: string;
@@ -70,6 +70,7 @@ export type InvitationData = {
   drawDateTime: string;
   drawCutOff: string;
   drawDistributionAsOn: string;
+  drawYear: number;
 };
 
 export type TooltipProps = {
@@ -77,4 +78,20 @@ export type TooltipProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload?: any[];
   label?: string;
+};
+
+export type TotalInvitation = {
+  cec: number;
+  provincial: number;
+  // Category Base
+  french: number;
+  healthcare: number;
+  stem: number;
+  trade: number;
+  education: number;
+  transport: number;
+  physicians: number;
+  senior: number;
+  researchers: number;
+  military: number;
 };

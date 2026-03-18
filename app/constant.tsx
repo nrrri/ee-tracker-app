@@ -25,7 +25,8 @@ export const drawType = {
 }
 
 export const keywordColors: Record<string, string> = {
-  Provincial: "#F09E7D",
+  Provincial: "#4BD296",
+  // Provincial: "#F09E7D",
   // Category Base
   French: "#F8991D",
   Healthcare: "#00859C",
@@ -37,6 +38,7 @@ export const keywordColors: Record<string, string> = {
   Senior: "#EBDCC7",
   Researchers: "#EBDEA6",
   Military: "#BBC5AB",
+  Canadian: '#FC4024',
 }
 
 export const keywordDrawType: Record<string, string> = {
@@ -55,4 +57,18 @@ export const keywordDrawType: Record<string, string> = {
   military: "Skilled military recruits",
 }
 
-export const allCategory = ["Canadian Experience Class", "Provincial Nominee Program", "French Language", "Healthcare and Social Services Occupations", "STEM", "Trade Occupations", "Education occupations", "Transport occupations", "Physicians", "Senior Managers",]
+export const allCategorise = ["Canadian Experience Class", "Provincial Nominee Program", "French-Language", "Healthcare and Social Services Occupations", "STEM", "Trade Occupations", "Education occupations", "Transport occupations", "Physicians", "Senior Managers",]
+
+export const convertStrToNumber = (str: string) => {
+  return Number(str.replace(/,/g, ""))
+}
+
+export const parseNumber = (value: string) =>
+  Number(value.replace(/,/g, ""));
+
+export function getColorFromName(name: string) {
+  const keyword = Object.keys(keywordColors).find(k =>
+    name.includes(k)
+  )
+  return keyword ? keywordColors[keyword] : "##D4D4D4"
+}
