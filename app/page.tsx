@@ -5,6 +5,7 @@ import AllTable from "./AllTable.tsx/AllTable";
 import { useEffect, useState } from "react";
 import { ExpressEntryDraw, InvitationData, PoolData } from "./type/Type";
 import { allCategorise, convertStrToNumber, parseNumber } from "./constant";
+import AnalysisCard from "./Analysis/AnalysisCard";
 
 export default function Home() {
   const [draws, setDraws] = useState<boolean>(true);
@@ -19,7 +20,7 @@ export default function Home() {
   useEffect(() => {
     const fetchData = () => {
       fetch(
-        `https://www.canada.ca/content/dam/ircc/documents/json/ee_rounds_123_en.json?t=${Date.now()}`
+        `${process.env.NEXT_PUBLIC_API_URL}${Date.now()}`
       )
         .then((res) => res.json())
         .then((json) => {
@@ -134,39 +135,8 @@ export default function Home() {
     <div>
       <main>
         <div className="m-8 text-3xl">Express Entry Tracker</div>
-        {/* todo: add recent draw */}
         <div className="flex justify-center gap-4 mb-8">
-          <div className="max-w-md w-full bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
-            <h1 className="text-xl font-semibold text-gray-800 mb-4">
-              Latest Round
-            </h1>
-            <div className="space-y-3 text-sm text-gray-600">
-              <div>
-                <span className="font-medium text-gray-800">Type:</span>{" "}
-                {drawData[0]?.drawName}
-              </div>
-              <div>
-                <span className="font-medium text-gray-800">Draw #:</span>{" "}
-                {drawData[0]?.drawNumber}
-              </div>
-              <div>
-                <span className="font-medium text-gray-800">Date:</span>{" "}
-                {drawData[0]?.drawDateFull}
-              </div>
-              <div>
-                <span className="font-medium text-gray-800">CRS Cut-off:</span>{" "}
-                {drawData[0]?.drawCRS}
-              </div>
-              <div>
-                <span className="font-medium text-gray-800">Invitations:</span>{" "}
-                {drawData[0]?.drawSize?.toLocaleString()}
-              </div>
-              <div>
-                <span className="font-medium text-gray-800">Tie-breaking rule:</span>{" "}
-                {drawData[0]?.drawCutOff}
-              </div>
-            </div>
-          </div>
+          <AnalysisCard drawData={drawData} />
           <div className="max-w-md w-full bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
             <h1 className="text-xl font-semibold text-gray-800 mb-4">Draw Summary of 2026</h1>
             <div className="space-y-3 text-sm text-gray-600">
@@ -179,6 +149,7 @@ export default function Home() {
                   <div key={cat.name}>
                     <span className="font-medium text-gray-800">{cat.name}: </span>
                     {cat.value.toLocaleString()}
+                    <span> [{cat.invitation.toLocaleString()}]</span>
                   </div>
 
                 )

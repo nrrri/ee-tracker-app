@@ -1,5 +1,3 @@
-import { InvitationData, PoolData } from "./type/Type";
-
 export const poolRangeMain = [
   "range601_1200",
   "range501_600",
