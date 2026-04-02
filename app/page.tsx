@@ -20,7 +20,7 @@ export default function Home() {
   useEffect(() => {
     const fetchData = () => {
       fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}${Date.now()}`
+        `https://www.canada.ca/content/dam/ircc/documents/json/ee_rounds_123_en.json?t=${Date.now()}`
       )
         .then((res) => res.json())
         .then((json) => {
