@@ -1,26 +1,23 @@
 "use client"
 
 import { PoolData } from "../../type/Type"
-import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart"
+import { ChartContainer, ChartTooltip } from "@/components/ui/chart"
+import { useEffect, useState } from "react"
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts"
+import FilterBox from "../Draws/FilterBox"
+import { chartConfig, getColorFromName, keywordPoolType } from "@/app/constant"
+import { CustomTooltip } from "@/components/CustomTooltip"
 
 type CandidateChartType = {
     poolData: PoolData[]
 }
 export default function CandidateChart({ poolData }: CandidateChartType) {
+    const [addFilterType, setAddFilterType] = useState<string[]>(["totalCandidates"]);
+    const [filterData, setFilterData] = useState<string>("")
+    const poolOptions = Object.values(keywordPoolType);
 
-    const chartConfig = {
-        desktop: {
-            label: "Desktop",
-            color: "#2563eb",
-        },
-        mobile: {
-            label: "Mobile",
-            color: "#60a5fa",
-        },
-    } satisfies ChartConfig
+    const mockData = poolData.slice(0, 40) // todo: add pagination
 
-    const mockData = poolData.slice(0, 20)
     const minBalance = Math.min(
         ...mockData.map(item => item.totalCandidates))
         ;
@@ -33,8 +30,22 @@ export default function CandidateChart({ poolData }: CandidateChartType) {
             year: "numeric",
         }),
     }));
+    // to set filter data
+    useEffect(() => {
+        if (addFilterType.length > 0) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setFilterData(addFilterType.toLocaleString())
+        }
+    }, [addFilterType])
+
     return (
         <div className="">
+            <FilterBox
+                options={poolOptions}
+                addFilterType={addFilterType}
+                setAddFilterType={setAddFilterType}
+                singleSelect // only one range at a time
+            />
             <div>
                 Total Candidate Chart
             </div>
@@ -52,9 +63,9 @@ export default function CandidateChart({ poolData }: CandidateChartType) {
                             angle={-90}
                             height={150}
                         />
-                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <ChartTooltip content={<CustomTooltip />} />
                         <YAxis domain={[minBalance, "auto"]} tickMargin={5} tickCount={5} />
-                        <Bar barSize={20} dataKey="totalCandidates" fill="var(--color-desktop)" radius={4} >
+                        <Bar barSize={20} dataKey={filterData} fill={getColorFromName(filterData, true)} radius={4} >
                             <LabelList
                                 position="top"
                                 offset={12}

@@ -1,3 +1,6 @@
+import { type ChartConfig } from "@/components/ui/chart"
+
+
 export const poolRangeMain = [
   "range601_1200",
   "range501_600",
@@ -39,21 +42,44 @@ export const keywordColors: Record<string, string> = {
   Canadian: '#FC4024',
 }
 
-export const keywordDrawType: Record<string, string> = {
-  cec: 'Canadian Experience Class',
-  provincial: "Provincial Nominee Program",
-  // Category Base
-  french: "French Language",
-  healthcare: "Healthcare and Social Services Occupations",
-  stem: "STEM",
-  trade: "Trade Occupations",
-  education: "Education occupations",
-  transport: "Transport occupations",
-  physicians: "Physicians",
-  senior: "Senior Managers",
-  researchers: "Researchers",
-  military: "Skilled military recruits",
+export const poolColors: Record<string, string> = {
+  range0_300: "#FFCCD3",
+  range301_350: "#FFA1AD",
+  range351_400: "#FF637E",
+  range401_450: "#FF2056",
+  range451_500: "#EC253F",
+  range501_600: "#C71D36",
+  range601_1200: "#A50C36",
+  totalCandidates: "#8B0836",
 }
+
+
+export const keywordDrawType = [
+  { key: 'cec', label: 'Canadian Experience Class' },
+  { key: "provincial", label: "Provincial Nominee Program" },
+  // Category Base
+  { key: "french", label: "French Language" },
+  { key: "healthcare", label: "Healthcare and Social Services Occupations" },
+  { key: "stem", label: "STEM" },
+  { key: "trade", label: "Trade Occupations" },
+  { key: "education", label: "Education occupations" },
+  { key: "transport", label: "Transport occupations" },
+  { key: "physicians", label: "Physicians" },
+  { key: "senior", label: "Senior Managers" },
+  { key: "researchers", label: "Researchers" },
+  { key: "military", label: "Skilled military recruits" },
+]
+
+export const keywordPoolType = [
+  { key: "range0_300", label: "0 - 300" },
+  { key: "range301_350", label: "301 - 350" },
+  { key: "range351_400", label: "351 - 400" },
+  { key: "range401_450", label: "401 - 450" },
+  { key: "range451_500", label: "451 - 500" },
+  { key: "range501_600", label: "501 - 600" },
+  { key: "range601_1200", label: "600+" },
+  { key: "totalCandidates", label: "Total Candidates" },
+] as const;
 
 export const allCategorise = ["Canadian Experience Class", "Provincial Nominee Program", "French-Language", "Healthcare and Social Services Occupations", "STEM", "Trade Occupations", "Education occupations", "Transport occupations", "Physicians", "Senior Managers",]
 
@@ -64,9 +90,21 @@ export const convertStrToNumber = (str: string) => {
 export const parseNumber = (value: string) =>
   Number(value.replace(/,/g, ""));
 
-export function getColorFromName(name: string) {
-  const keyword = Object.keys(keywordColors).find(k =>
+export function getColorFromName(name: string, pool: boolean = false) {
+  const color: Record<string, string> = pool ? poolColors : keywordColors
+  const keyword = Object.keys(color).find(k =>
     name.includes(k)
   )
-  return keyword ? keywordColors[keyword] : "##D4D4D4"
+  return keyword ? color[keyword] : "#D4D4D4"
 }
+
+export const chartConfig = {
+  desktop: {
+    label: "Desktop",
+    color: "#2563eb",
+  },
+  mobile: {
+    label: "Mobile",
+    color: "#60a5fa",
+  },
+} satisfies ChartConfig

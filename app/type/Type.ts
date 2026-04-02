@@ -95,3 +95,8 @@ export type TotalInvitation = {
   researchers: number;
   military: number;
 };
+
+export type Option = {
+  key: string;
+  label: string;
+};
