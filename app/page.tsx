@@ -81,7 +81,7 @@ export default function Home() {
             <h1 className="text-xl font-semibold text-gray-800 mb-4">Draw Summary of 2026</h1>
             <div className="space-y-3 text-sm text-gray-600">
               <div>
-                <span className="font-medium text-gray-800">Totol Invitations:</span>{" "}
+                <span className="font-medium text-gray-800">Total Invitations:</span>{" "}
                 {totalInvitationCurrentYear()}
               </div>
               <div className="space-y-3 text-sm text-gray-600">{totalInvitationCurrentYearByCategory.map((cat) => {
