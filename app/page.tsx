@@ -21,8 +21,6 @@ export default function Home() {
       ]);
       const { draws } = await drawsRes.json();
       const { pool } = await poolRes.json();
-      console.log('check draws', draws)
-      console.log('check pool', pool)
       setDrawData(draws);
       setPoolData(pool);
     };
