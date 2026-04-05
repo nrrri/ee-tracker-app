@@ -41,14 +41,22 @@ export default function Home() {
     return total.toLocaleString();
   };
 
-
   const getCategory = (input: string) => {
     const lower = input.toLowerCase();
 
     return (
-      allCategorise.find(cat =>
-        lower.includes(cat.toLowerCase())
-      ) || "Other"
+      allCategorise.find(cat => {
+        const catLower = cat.toLowerCase();
+        // normalize both sides: remove trailing 's', hyphens, extra spaces
+        const normalize = (str: string) =>
+          str.replace(/-/g, ' ')     // french-language → french language
+            .replace(/s\b/g, '')    // trades → trade, occupations → occupation
+            .replace(/\s+/g, ' ')  // clean up spaces
+            .trim();
+
+        return normalize(lower).includes(normalize(catLower)) ||
+          normalize(catLower).includes(normalize(lower.split('(')[0].trim()));
+      }) || "Other"
     );
   };
 
