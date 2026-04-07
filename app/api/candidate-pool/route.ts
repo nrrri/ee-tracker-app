@@ -2,7 +2,7 @@ import sql from "@/lib/db";
 
 export async function GET() {
   const rows =
-    await sql`SELECT * FROM ee_candidate_pool ORDER BY draw_distribution_as_on DESC`;
+    await sql`SELECT * FROM ee_candidate_pool ORDER BY draw_distribution_as_on::date DESC`;
 
   const pool = rows.map((r) => ({
     drawDistributionAsOn: r.draw_distribution_as_on,
