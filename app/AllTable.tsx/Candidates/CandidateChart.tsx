@@ -4,23 +4,43 @@ import { PoolData } from "../../type/Type"
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart"
 import { useEffect, useState } from "react"
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts"
-import FilterBox from "../Draws/FilterBox"
 import { chartConfig, getColorFromName, keywordPoolType } from "@/app/constant"
 import { CustomTooltip } from "@/components/CustomTooltip"
+import FilterDropdown from "@/components/FilterDropdown"
+import FilterBox from "@/components/FilterBox"
+import { Option } from "@/app/type/Type" // ← fixed import path
 
 type CandidateChartType = {
     poolData: PoolData[]
 }
+
 export default function CandidateChart({ poolData }: CandidateChartType) {
     const [addFilterType, setAddFilterType] = useState<string[]>(["totalCandidates"]);
-    const [filterData, setFilterData] = useState<string>("")
+    const [selectedYears, setSelectedYears] = useState<string[]>([]);
+    const [filterData, setFilterData] = useState<string>("totalCandidates")
+
     const poolOptions = Object.values(keywordPoolType);
 
-    const mockData = poolData.slice(0, 40) // todo: add pagination
+    // derive year options dynamically from poolData
+    const yearOptions: Option[] = Array.from(
+        new Set(poolData.map(d => new Date(d.drawDistributionAsOn).getFullYear()))
+    )
+        .sort((a, b) => b - a)
+        .map(year => ({
+            key: String(year),
+            label: String(year),
+        }));
 
-    const minBalance = Math.min(
-        ...mockData.map(item => item.totalCandidates))
-        ;
+    // filter by selected years first, then slice for pagination
+    const filteredByYear = selectedYears.length === 0
+        ? poolData
+        : poolData.filter(d =>
+            selectedYears.includes(String(new Date(d.drawDistributionAsOn).getFullYear()))
+        );
+
+    const mockData = filteredByYear.slice(0, 40); // todo: add pagination
+
+    const minBalance = Math.min(...mockData.map(item => item.totalCandidates));
 
     const formattedDate = mockData.map(d => ({
         ...d,
@@ -30,7 +50,7 @@ export default function CandidateChart({ poolData }: CandidateChartType) {
             year: "numeric",
         }),
     }));
-    // to set filter data
+
     useEffect(() => {
         if (addFilterType.length > 0) {
             // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -40,15 +60,24 @@ export default function CandidateChart({ poolData }: CandidateChartType) {
 
     return (
         <div className="">
-            <FilterBox
-                options={poolOptions}
-                addFilterType={addFilterType}
-                setAddFilterType={setAddFilterType}
-                singleSelect // only one range at a time
-            />
-            <div>
-                Total Candidate Chart
+            <div className="flex justify-center">
+                <div className="p-8 py-8 bg-gray-50 rounded-xl shadow-lg mx-24 mb-12">
+                    <div className="border-b pb-4">
+                        <FilterDropdown
+                            options={poolOptions}
+                            addFilterType={addFilterType}
+                            setAddFilterType={setAddFilterType}
+                        />
+                    </div>
+                    <FilterBox
+                        options={yearOptions}
+                        addFilterType={selectedYears}
+                        setAddFilterType={setSelectedYears}
+                        label="Filter by year"
+                    />
+                </div>
             </div>
+
             {/* Chart */}
             <div>
                 <ChartContainer config={chartConfig} className="min-h-50 w-full">
@@ -65,18 +94,18 @@ export default function CandidateChart({ poolData }: CandidateChartType) {
                         />
                         <ChartTooltip content={<CustomTooltip />} />
                         <YAxis domain={[minBalance, "auto"]} tickMargin={5} tickCount={5} />
-                        <Bar barSize={20} dataKey={filterData} fill={getColorFromName(filterData, true)} radius={4} >
+                        <Bar barSize={20} dataKey={filterData} fill={getColorFromName(filterData, true)} radius={4}>
                             <LabelList
                                 position="top"
                                 offset={12}
                                 className="fill-foreground"
                                 fontSize={12}
                                 formatter={(value: number) => value.toLocaleString()}
-                            /></Bar >
-
+                            />
+                        </Bar>
                     </BarChart>
                 </ChartContainer>
-            </div >
+            </div>
         </div>
     )
 }

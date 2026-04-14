@@ -6,7 +6,7 @@ import { ChartContainer, ChartTooltip } from "@/components/ui/chart"
 import { Bar, BarChart, CartesianGrid, Cell, LabelList, XAxis, YAxis } from "recharts"
 import { chartConfig, getColorFromName, keywordDrawType } from "@/app/constant"
 import { useEffect, useState } from "react"
-import FilterBox from "./FilterBox"
+import FilterBox from "../../../components/FilterBox"
 
 type DrawChartType = {
     drawData: InvitationData[]
@@ -49,12 +49,15 @@ export default function DrawChart({ drawData }: DrawChartType) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [addFilterType])
     return (
-        <div className="">
-            <FilterBox
-                options={drawOptions}
-                addFilterType={addFilterType}
-                setAddFilterType={setAddFilterType}
-            />
+        <div className="flex items-center flex-col">
+            <div className="w-280 pl-16 p-4 pb-8 bg-gray-50 rounded-xl shadow-lg mx-24 mb-12">
+                <FilterBox
+                    options={drawOptions}
+                    addFilterType={addFilterType}
+                    setAddFilterType={setAddFilterType}
+                    label={"Filter by range"}
+                />
+            </div>
             {/* Chart */}
             {
                 mockData.length > 0 ?
