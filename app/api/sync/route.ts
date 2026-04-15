@@ -70,7 +70,7 @@ export async function GET(request: Request) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (r: any) => r.drawName !== "No Program Specified",
     );
-
+    console.log("check draw", rounds);
     // Save draws
     for (const draw of rounds) {
       await sql`
@@ -133,9 +133,9 @@ export async function GET(request: Request) {
       success: true,
       totalFromUrl: rounds.length,
       latestDraw: rounds[0]?.drawNumber,
-      ranAt: torontoTime.toISOString(),
+      // ranAt: torontoTime.toISOString(),
     });
-    return Response.json({ ok: true, synced: rounds.length });
+    // return Response.json({ ok: true, synced: rounds.length });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {
     return NextResponse.json(
