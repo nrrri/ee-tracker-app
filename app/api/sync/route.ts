@@ -17,13 +17,13 @@ function isActiveWeek(torontoTime: Date): boolean {
 
 export async function GET(request: Request) {
   // Auth check
-  const authHeader = request.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return Response.json(
-      { ok: false, message: "Unauthorized" },
-      { status: 401 },
-    );
-  }
+  // const authHeader = request.headers.get("authorization");
+  // if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  //   return Response.json(
+  //     { ok: false, message: "Unauthorized" },
+  //     { status: 401 },
+  //   );
+  // }
 
   // Get current Toronto time
   const now = new Date();
