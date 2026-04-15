@@ -43,4 +43,11 @@ export async function createTables() {
       total_candidates INT
     )
   `;
+
+  await sql`
+  CREATE TABLE IF NOT EXISTS ee_sync_log (
+    id        SERIAL PRIMARY KEY,
+    synced_at TIMESTAMPTZ NOT NULL,
+  )
+`;
 }

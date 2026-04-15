@@ -63,7 +63,10 @@ export async function GET(request: Request) {
     });
     console.log(res);
     const json = await res.json();
-    const rounds = json.rounds;
+    const rounds = json.rounds.filter(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (r: any) => r.drawName !== "No Program Specified",
+    );
 
     // Save draws
     for (const draw of rounds) {
@@ -92,6 +95,7 @@ export async function GET(request: Request) {
           draw_name    = EXCLUDED.draw_name,
           draw_size    = EXCLUDED.draw_size,
           draw_crs     = EXCLUDED.draw_crs
+        RETURNING draw_number
       `;
     }
 
@@ -124,7 +128,9 @@ export async function GET(request: Request) {
     }
     return NextResponse.json({
       success: true,
-      message: "Cron execute successfully",
+      totalFromUrl: rounds.length,
+      latestDraw: rounds[0]?.drawNumber,
+      ranAt: torontoTime.toISOString(),
     });
     return Response.json({ ok: true, synced: rounds.length });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -132,7 +138,7 @@ export async function GET(request: Request) {
     return NextResponse.json(
       {
         success: false,
-        message: "Cron Failed",
+        message: `Cron Failed: ${String(err)}`,
       },
       {
         status: 500,
