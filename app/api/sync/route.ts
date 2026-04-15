@@ -25,42 +25,45 @@ export async function GET(request: Request) {
   //   );
   // }
 
-  // Get current Toronto time
-  const now = new Date();
-  const torontoTime = new Date(
-    now.toLocaleString("en-US", { timeZone: "America/Toronto" }),
-  );
+  // // Get current Toronto time
+  // const now = new Date();
+  // const torontoTime = new Date(
+  //   now.toLocaleString("en-US", { timeZone: "America/Toronto" }),
+  // );
 
-  // Don't run before Apr 13 2026
-  const startDate = new Date("2026-04-13T00:00:00");
-  if (torontoTime < startDate) {
-    return Response.json({ ok: false, message: "Not started yet" });
-  }
+  // // Don't run before Apr 13 2026
+  // const startDate = new Date("2026-04-13T00:00:00");
+  // if (torontoTime < startDate) {
+  //   return Response.json({ ok: false, message: "Not started yet" });
+  // }
 
-  // Only run on active weeks (every 2 weeks from Apr 13)
-  if (!isActiveWeek(torontoTime)) {
-    return Response.json({ ok: false, message: "Off week — skipping" });
-  }
+  // // Only run on active weeks (every 2 weeks from Apr 13)
+  // if (!isActiveWeek(torontoTime)) {
+  //   return Response.json({ ok: false, message: "Off week — skipping" });
+  // }
 
-  // Only run on weekdays (safety net for DST edge cases)
-  const day = torontoTime.getDay(); // 0 = Sun, 6 = Sat
-  if (day === 0 || day === 6) {
-    return Response.json({ ok: false, message: "Weekend — skipping" });
-  }
+  // // Only run on weekdays (safety net for DST edge cases)
+  // const day = torontoTime.getDay(); // 0 = Sun, 6 = Sat
+  // if (day === 0 || day === 6) {
+  //   return Response.json({ ok: false, message: "Weekend — skipping" });
+  // }
 
-  // Only run between 10am–4pm Toronto time
-  const hour = torontoTime.getHours();
-  if (hour < 10 || hour >= 16) {
-    return Response.json({ ok: false, message: "Outside hours — skipping" });
-  }
+  // // Only run between 10am–4pm Toronto time
+  // const hour = torontoTime.getHours();
+  // if (hour < 10 || hour >= 16) {
+  //   return Response.json({ ok: false, message: "Outside hours — skipping" });
+  // }
 
   try {
     // Make sure tables exist
     await createTables();
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${Date.now()}`, {
-      cache: "no-store",
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}?t=${Date.now()}`,
+      {
+        cache: "no-store",
+      },
+    );
     console.log(res);
     const json = await res.json();
     const rounds = json.rounds.filter(
