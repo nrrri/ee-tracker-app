@@ -31,7 +31,6 @@ export async function GET(request: Request) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (r: any) => r.drawName !== "No Program Specified",
     );
-    console.log("check draw", rounds);
     // Save draws
     for (const draw of rounds) {
       await sql`

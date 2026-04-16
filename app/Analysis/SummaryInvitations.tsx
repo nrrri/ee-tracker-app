@@ -4,6 +4,7 @@ import {
 import { InvitationData } from '../type/Type';
 import { CustomTooltipSummary } from '@/components/CustomTooltip';
 import { allCategorise, getColorFromName } from '../constant';
+import { ExternalLink } from 'lucide-react';
 
 type SummaryInvitationsProps = {
     drawData: InvitationData[];
@@ -84,10 +85,24 @@ export default function SummaryInvitations({ drawData, currYear }: SummaryInvita
     // dynamic height: 52px per bar
     const chartHeight = chartData.length * 42;
     return (
-        <div className="w-150 bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
+        <div className="flex flex-col w-150 bg-white border border-gray-200 rounded-2xl shadow-sm p-6 items-center">
             <h1 className="text-xl font-semibold text-gray-800 mb-1">Draw Summary of {currYear}</h1>
-            <p className="text-gray-500 mb-4 text-l">
-                Total Invitations: <span className="text-[#C71D36] font-bold">{totalInvitationCurrentYear()}</span> <span className='text-xs'><a href='https://www.canada.ca/en/immigration-refugees-citizenship/corporate/mandate/corporate-initiatives/levels/supplementary-immigration-levels-2026-2028.html'>/85,000-120,000*</a></span>
+            <p className="text-gray-500 mb-4 text-l flex items-center gap-2">
+                Total Invitations:
+                <span className="text-[#C71D36] font-bold">
+                    {totalInvitationCurrentYear()}
+                </span>
+                <span className="text-xs flex items-center gap-1">
+                    <a
+                        href="https://www.canada.ca/en/immigration-refugees-citizenship/corporate/mandate/corporate-initiatives/levels/supplementary-immigration-levels-2026-2028.html"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1"
+                    >
+                        /85,000–120,000
+                        <ExternalLink size={12} />
+                    </a>
+                </span>
             </p>
             <ResponsiveContainer width="100%" height={chartHeight}>
                 <BarChart

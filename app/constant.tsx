@@ -120,3 +120,5 @@ export const darkenHex = (hex: string, factor = 0.8) => {
     .map(v => v.toString(16).padStart(2, "0"))
     .join("")}`;
 };
+
+export const PAGE_SIZE = 30;

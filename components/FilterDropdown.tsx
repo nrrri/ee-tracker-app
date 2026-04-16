@@ -3,7 +3,7 @@ import { Option } from "../app/type/Type";
 type FilterDropdownType = {
     options: Option[];
     addFilterType: string[];
-    setAddFilterType: React.Dispatch<React.SetStateAction<string[]>>;
+    setAddFilterType: React.Dispatch<React.SetStateAction<string[]>> ;
     label?: string;
 }
 
