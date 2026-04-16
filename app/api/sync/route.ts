@@ -5,7 +5,15 @@ function toNum(str: string): number {
   return parseInt(str.replace(/,/g, ""), 10) || 0;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  // Cron job
+  const authHeader = request.headers.get("authorization");
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return new Response("Unauthorized", {
+      status: 401,
+    });
+  }
+
   try {
     // Make sure tables exist
     await createTables();
