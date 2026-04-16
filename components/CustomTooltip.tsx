@@ -24,15 +24,37 @@ export function CustomTooltip({ active, payload }: TooltipProps) {
 }
 
 export const CustomTooltipSummary = ({ active, payload }: TooltipProps) => {
-    if (active && payload && payload.length) {
-        const d = payload[0].payload;
-        return (
-            <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-3 text-sm">
-                <p className="font-semibold text-gray-800 mb-1">{d.fullName}</p>
-                <p className="text-gray-600">Invitations: <span className="font-medium text-gray-800">{d.value.toLocaleString()}</span></p>
-                <p className="text-gray-600">Draws: <span className="font-medium text-gray-800">{d.invitation}</span></p>
-            </div>
-        );
-    }
-    return null;
+    if (!active || !payload?.length) return null;
+
+    // Recharts gives one entry per bar (so we extract both safely)
+    const current = payload.find(p => p.dataKey === "currentYear")?.payload;
+    const prev = payload.find(p => p.dataKey === "prevYear")?.payload;
+
+    const name = current?.name ?? prev?.name ?? "Unknown";
+
+    const currentValue = Number(current?.currentYear ?? 0);
+    const prevValue = Number(prev?.prevYear ?? 0);
+
+    const currentInv = current?.currentInvitations ?? 0;
+    const prevInv = prev?.prevInvitations ?? 0;
+
+    return (
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-3 text-sm">
+            <p className="font-semibold text-gray-800 mb-2">{name}</p>
+
+            <p className="text-gray-600">
+                Current Year:{" "}
+                <span className="font-medium text-gray-800">
+                    {currentValue.toLocaleString()} [{currentInv}]
+                </span>
+            </p>
+
+            <p className="text-gray-600">
+                Previous Year:{" "}
+                <span className="font-medium text-gray-800">
+                    {prevValue.toLocaleString()} [{prevInv}]
+                </span>
+            </p>
+        </div>
+    );
 };

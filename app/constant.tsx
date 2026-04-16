@@ -108,3 +108,15 @@ export const chartConfig = {
     color: "#60a5fa",
   },
 } satisfies ChartConfig
+
+export const darkenHex = (hex: string, factor = 0.8) => {
+  hex = hex.replace("#", "");
+
+  const r = Math.floor(parseInt(hex.slice(0, 2), 16) * factor);
+  const g = Math.floor(parseInt(hex.slice(2, 4), 16) * factor);
+  const b = Math.floor(parseInt(hex.slice(4, 6), 16) * factor);
+
+  return `#${[r, g, b]
+    .map(v => v.toString(16).padStart(2, "0"))
+    .join("")}`;
+};

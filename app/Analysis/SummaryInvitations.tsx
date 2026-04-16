@@ -11,6 +11,8 @@ type SummaryInvitationsProps = {
 }
 
 export default function SummaryInvitations({ drawData, currYear }: SummaryInvitationsProps) {
+    const currMap = new Map<string, { currentYear: number; invitation: number }>();
+    const prevMap = new Map<string, { prevYear: number; invitation: number }>();
 
     const totalInvitationCurrentYear = () => {
         const total = drawData.reduce((acc, curr) => {
@@ -39,25 +41,48 @@ export default function SummaryInvitations({ drawData, currYear }: SummaryInvita
         );
     };
 
-    const chartData = Object.entries(
-        drawData
-            .filter(draw => draw.drawYear === currYear)
-            .reduce((acc, curr) => {
-                const key = getCategory(curr.drawName);
-                if (!acc[key]) acc[key] = { value: 0, invitation: 0 };
-                acc[key].value += curr.drawSize;
-                acc[key].invitation += 1;
-                return acc;
-            }, {} as Record<string, { value: number; invitation: number }>)
-    ).map(([name, data]) => ({
-        name,
-        value: data.value,
-        invitation: data.invitation,
-    })).sort((a, b) => b.value - a.value); // ascending so largest is at top
+    drawData
+        .filter(d => d.drawYear === currYear)
+        .forEach(curr => {
+            const key = getCategory(curr.drawName);
+
+            if (!currMap.has(key)) {
+                currMap.set(key, { currentYear: 0, invitation: 0 });
+            }
+
+            const entry = currMap.get(key)!;
+            entry.currentYear += curr.drawSize;
+            entry.invitation += 1;
+        });
+
+    drawData
+        .filter(d => d.drawYear === currYear - 1)
+        .forEach(curr => {
+            const key = getCategory(curr.drawName);
+
+            if (!prevMap.has(key)) {
+                prevMap.set(key, { prevYear: 0, invitation: 0 });
+            }
+
+            const entry = prevMap.get(key)!;
+            entry.prevYear += curr.drawSize;
+            entry.invitation += 1;
+        });
+
+    const chartData = Array.from(
+        new Set([...currMap.keys(), ...prevMap.keys()])
+    )
+        .map(name => ({
+            name,
+            currentYear: currMap.get(name)?.currentYear ?? 0,
+            prevYear: prevMap.get(name)?.prevYear ?? 0,
+            currentInvitations: currMap.get(name)?.invitation ?? 0,
+            prevInvitations: prevMap.get(name)?.invitation ?? 0,
+        }))
+        .sort((a, b) => b.currentYear - a.currentYear);
 
     // dynamic height: 52px per bar
     const chartHeight = chartData.length * 42;
-
     return (
         <div className="w-150 bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
             <h1 className="text-xl font-semibold text-gray-800 mb-1">Draw Summary of {currYear}</h1>
@@ -83,7 +108,7 @@ export default function SummaryInvitations({ drawData, currYear }: SummaryInvita
                         width={155}
                     />
                     <Tooltip content={<CustomTooltipSummary />} />
-                    <Bar dataKey="value" radius={[0, 3, 3, 0]} maxBarSize={28}>
+                    <Bar dataKey="currentYear" radius={[0, 3, 3, 0]} maxBarSize={28}>
                         {chartData.map((drawName, index) => (
                             <Cell
                                 key={index}
@@ -102,7 +127,32 @@ export default function SummaryInvitations({ drawData, currYear }: SummaryInvita
                                         fontSize={12}
                                         fill="#6b7280"
                                     >
-                                        {Number(value).toLocaleString()} [{item?.invitation}]
+                                        {Number(value).toLocaleString()} [{item?.currentInvitations}]
+                                    </text>
+                                );
+                            }}
+                        />
+                    </Bar>
+                    <Bar dataKey="prevYear" radius={[0, 3, 3, 0]} maxBarSize={28}>
+                        {chartData.map((drawName, index) => (
+                            <Cell
+                                key={`${drawName}-${index}`}
+                                fill={'#dfdfdf'}
+                            />
+                        ))}
+                        {/* shows "45,000 [12]" at end of each bar */}
+                        <LabelList
+                            content={({ x, y, width, height, value, index }) => {
+                                const item = chartData[index as number];
+                                return (
+                                    <text
+                                        x={Number(x) + Number(width) + 8}
+                                        y={Number(y) + Number(height) / 2}
+                                        dominantBaseline="middle"
+                                        fontSize={12}
+                                        fill="#6b7280"
+                                    >
+                                        {Number(value).toLocaleString()} [{item?.prevInvitations}]
                                     </text>
                                 );
                             }}
