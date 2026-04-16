@@ -40,7 +40,7 @@ export default function Home() {
         </div>
         <div className="flex justify-end mr-8">
           <ButtonGroup>
-            <Button variant="outline" size="lg" className="hover:bg-transparent ">Return to</Button>
+            <Button variant="outline" size="lg" className="hover:bg-transparent ">Go to</Button>
             {
               <Button onClick={(() => setDraws(!draws))} variant="outline" size="lg">{draws ? 'Candidate Pool' : 'Rounds of invitations'}</Button>
             }
