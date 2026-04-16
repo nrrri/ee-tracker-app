@@ -103,12 +103,12 @@ export default function DrawChart({ drawData }: DrawChartType) {
                             width: mockData.length > 30 ? mockData.length * 40 : "100%",
                             minHeight: "400px",
                         }}>
-                            <ChartContainer config={chartConfig} className="min-h-50 w-full">
+                            <ChartContainer config={chartConfig}>
                                 <BarChart
                                     accessibilityLayer
                                     data={mockData}
-                                    width={mockData.length > 30 ? mockData.length * 40 : 800}
-                                    height={200}
+                                    width={800}
+                                    height={600}
                                 >
                                     <CartesianGrid vertical={false} />
                                     <XAxis
