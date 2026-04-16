@@ -4,7 +4,6 @@ import { ButtonGroup } from "@/components/ui/button-group"
 import AllTable from "./AllTable.tsx/AllTable";
 import { useEffect, useState } from "react";
 import { InvitationData, PoolData } from "./type/Type";
-import { allCategorise } from "./constant";
 import AnalysisCard from "./Analysis/AnalysisCard";
 import SummaryInvitations from "./Analysis/SummaryInvitations";
 
