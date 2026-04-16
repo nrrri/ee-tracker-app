@@ -107,8 +107,6 @@ export default function DrawChart({ drawData }: DrawChartType) {
                                 <BarChart
                                     accessibilityLayer
                                     data={mockData}
-                                    width={800}
-                                    height={600}
                                 >
                                     <CartesianGrid vertical={false} />
                                     <XAxis
@@ -127,7 +125,7 @@ export default function DrawChart({ drawData }: DrawChartType) {
                                         tickMargin={5}
                                         tickCount={5}
                                     />
-                                    <Bar barSize={20} dataKey="drawCRS" radius={4}>
+                                    <Bar barSize={18} dataKey="drawCRS" radius={4}>
                                         {mockData.map((entry, index) => (
                                             <Cell key={index} fill={getColorFromName(entry.drawName)} />
                                         ))}

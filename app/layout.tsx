@@ -1,3 +1,4 @@
+import MobileGate from "@/components/MobileGate";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google"
@@ -23,7 +24,9 @@ export default function RootLayout({
       <body
         className={`font-sans text-center`}
       >
-        {children}
+       <MobileGate>
+          {children}
+        </MobileGate> 
       </body>
     </html>
   );

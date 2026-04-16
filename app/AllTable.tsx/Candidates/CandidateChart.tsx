@@ -112,7 +112,7 @@ export default function CandidateChart({ poolData }: CandidateChartType) {
                         <ChartTooltip content={<CustomTooltip />} />
                         <YAxis domain={[minBalance, "auto"]} tickMargin={5} tickCount={5} />
                         {/* todo: add dif color for dif year */}
-                        <Bar barSize={20} dataKey={formattedAddFilterType} radius={4}>
+                        <Bar barSize={18} dataKey={formattedAddFilterType} radius={4}>
                             {
                                 formattedDate.map((entry, index) => {
                                     return (
