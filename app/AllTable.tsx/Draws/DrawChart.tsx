@@ -84,12 +84,14 @@ export default function DrawChart({ drawData }: DrawChartType) {
                     options={drawOptions}
                     addFilterType={addFilterType}
                     setAddFilterType={setAddFilterType}
+                    setPage={setPage}
                     label="Filter by range"
                 />
                 <FilterBox
                     options={yearOptions}
                     addFilterType={selectedYears}
                     setAddFilterType={setSelectedYears}
+                    setPage={setPage}
                     label="Filter by year"
                 />
             </div>

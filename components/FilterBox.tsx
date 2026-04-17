@@ -5,6 +5,7 @@ type FilterBoxType = {
     options: Option[];
     addFilterType: string[];
     setAddFilterType: React.Dispatch<React.SetStateAction<string[]>>;
+    setPage: React.Dispatch<React.SetStateAction<number>>;
     label: string;
 }
 
@@ -12,6 +13,7 @@ export default function FilterBox({
     options,
     addFilterType,
     setAddFilterType,
+    setPage,
     label
 }: FilterBoxType) {
 
@@ -21,6 +23,7 @@ export default function FilterBox({
                 ? prev.filter(v => v !== value)
                 : [...prev, value]
         );
+        setPage(1)
     };
 
     return (

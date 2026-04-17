@@ -89,6 +89,7 @@ export default function CandidateChart({ poolData }: CandidateChartType) {
                         options={yearOptions}
                         addFilterType={selectedYears}
                         setAddFilterType={setSelectedYears}
+                        setPage={setPage}
                         label="Filter by year"
                     />
                 </div>
