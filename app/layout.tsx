@@ -2,6 +2,7 @@ import MobileGate from "@/components/MobileGate";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google"
+import { Analytics } from '@vercel/analytics/react'
 
 
 const inter = Inter({
@@ -24,9 +25,10 @@ export default function RootLayout({
       <body
         className={`font-sans text-center`}
       >
-       <MobileGate>
+        <MobileGate>
           {children}
-        </MobileGate> 
+          <Analytics />
+        </MobileGate>
       </body>
     </html>
   );
