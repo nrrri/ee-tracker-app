@@ -7,7 +7,6 @@ import { InvitationData, PoolData } from "./type/Type";
 import AnalysisCard from "./Analysis/AnalysisCard";
 import SummaryInvitations from "./Analysis/SummaryInvitations";
 import { TriangleAlert } from "lucide-react";
-import Link from "next/link";
 
 export default function Home() {
   const [draws, setDraws] = useState<boolean>(true);
@@ -35,7 +34,6 @@ export default function Home() {
   return (
     <div>
       <main>
-        {/* todo: move to isolate component */}
         <div className="w-full bg-amber-50 border border-amber-200 text-amber-900 rounded-lg px-4 py-3 mb-6 text-sm flex items-start gap-1">
           <TriangleAlert size={18} className="shrink-0" />
           <div>
@@ -57,22 +55,14 @@ export default function Home() {
         <div className="flex justify-center gap-4 mb-8">
           <AnalysisCard drawData={drawData} />
           <SummaryInvitations drawData={drawData} currYear={currYear} />
-          {/* todo: add AI summary trend each new draw */}
         </div>
-        {/* todo: move menu to isolate component */}
-        <div className="flex justify-end mr-8 gap-1">
+        <div className="flex justify-end mr-8">
           <ButtonGroup>
             <Button variant="outline" size="lg" className="hover:bg-transparent ">Go to</Button>
             {
-              // todo: add router 
               <Button onClick={(() => setDraws(!draws))} variant="outline" size="lg">{draws ? 'Candidate Pool' : 'Rounds of invitations'}</Button>
             }
           </ButtonGroup>
-          <Link href="/draw-analysis" className="underline">
-            <Button>
-              Analysis Mode
-            </Button>
-          </Link>
         </div>
         <AllTable tableType={draws} drawData={drawData} poolData={poolData} />
       </main>
