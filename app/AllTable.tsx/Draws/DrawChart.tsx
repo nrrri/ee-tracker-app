@@ -4,7 +4,7 @@ import { CustomTooltip } from "@/components/CustomTooltip"
 import { InvitationData } from "../../type/Type"
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart"
 import { Bar, BarChart, CartesianGrid, Cell, LabelList, XAxis, YAxis } from "recharts"
-import { chartConfig, getColorFromName, keywordDrawType, maxBalance, minBalance, PAGE_SIZE } from "@/app/constant"
+import { chartConfig, getColorFromName, keywordDrawType, PAGE_SIZE } from "@/app/constant"
 import { useEffect, useState } from "react"
 import FilterBox from "../../../components/FilterBox"
 import { Option } from "@/app/type/Type"
@@ -46,6 +46,22 @@ export default function DrawChart({ drawData }: DrawChartType) {
             );
     };
 
+    const minBalance = (data: InvitationData[]) => {
+        // ! disable min
+        // const findMinScore = Math.min(...data.map(item => Number(item.drawCRS))) - 100;
+        return 0;
+        // return findMinScore > 0 ? findMinScore : 0;
+    };
+
+    const maxBalance = (data: InvitationData[]) => {
+        let addCeil = 50;
+        if (addFilterType.length > 0) addCeil = 10;
+        const findMax = Math.ceil(
+            (Math.max(...data.map(item => Number(item.drawCRS))) + addCeil) / addCeil
+        ) * addCeil;
+        return findMax;
+    };
+
     // re-run whenever category or year filter changes
     useEffect(() => {
         let result = drawData;
@@ -58,8 +74,8 @@ export default function DrawChart({ drawData }: DrawChartType) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [addFilterType, selectedYears]);
 
-    const totalPages = filterData.length > 0 ? Math.ceil(filterData.length / PAGE_SIZE) : Math.ceil(drawData.length / PAGE_SIZE)
-    const mockData = filterData.length > 0 ? filterData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE) : drawData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+    const totalPages = Math.ceil(filterData.length / PAGE_SIZE)
+    const mockData = filterData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE); // todo: add pagination
 
     return (
         <div className="flex items-center flex-col">
@@ -107,7 +123,7 @@ export default function DrawChart({ drawData }: DrawChartType) {
                                     />
                                     <ChartTooltip content={<CustomTooltip />} />
                                     <YAxis
-                                        domain={[minBalance(mockData, addFilterType.length !== 0), maxBalance(mockData, addFilterType)]}
+                                        domain={[minBalance(mockData), maxBalance(mockData)]}
                                         tickMargin={5}
                                         tickCount={5}
                                     />
