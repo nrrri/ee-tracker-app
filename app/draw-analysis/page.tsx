@@ -1,27 +1,29 @@
-"use client"
+"use client";
 
-import { CustomTooltip } from "@/components/CustomTooltip"
-import { InvitationData } from "../../type/Type"
-import { ChartContainer, ChartTooltip } from "@/components/ui/chart"
-import { Bar, BarChart, CartesianGrid, Cell, LabelList, XAxis, YAxis } from "recharts"
-import { chartConfig, getColorFromName, keywordDrawType, maxBalance, minBalance, PAGE_SIZE } from "@/app/constant"
-import { useEffect, useState } from "react"
-import FilterBox from "../../../components/FilterBox"
+import { PaginationControl } from "@/components/PaginationControl";
+import { InvitationData } from "../type/Type";
+import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
+import { Bar, BarChart, CartesianGrid, Cell, LabelList, XAxis, YAxis } from "recharts";
+import { chartConfig, getColorFromName, keywordDrawType, PAGE_SIZE } from "../constant";
+import { useEffect, useState } from "react";
 import { Option } from "@/app/type/Type"
-import { PaginationControl } from "@/components/PaginationControl"
+import FilterBox from "@/components/FilterBox";
+import { CustomTooltip } from "@/components/CustomTooltip";
 
-type DrawChartType = {
+
+
+type AnalysisDrawProps = {
     drawData: InvitationData[]
 }
 
-export default function DrawChart({ drawData }: DrawChartType) {
+export default function AnalysisDraw({ drawData }: AnalysisDrawProps) {
     const [addFilterType, setAddFilterType] = useState<string[]>([]);
     const [selectedYears, setSelectedYears] = useState<string[]>([]);
     const [filterData, setFilterData] = useState<InvitationData[]>(drawData)
     const [page, setPage] = useState(1);
-
     const drawOptions = Object.values(keywordDrawType);
 
+    const totalPages = filterData.length > 0 ? Math.ceil(filterData.length / PAGE_SIZE) : Math.ceil(drawData.length / PAGE_SIZE)
     // derive year options from drawDate (not drawDistributionAsOn)
     const yearOptions: Option[] = Array.from(
         new Set(drawData.map(d => new Date(d.drawDate).getFullYear()))
@@ -58,11 +60,12 @@ export default function DrawChart({ drawData }: DrawChartType) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [addFilterType, selectedYears]);
 
-    const totalPages = filterData.length > 0 ? Math.ceil(filterData.length / PAGE_SIZE) : Math.ceil(drawData.length / PAGE_SIZE)
-    const mockData = filterData.length > 0 ? filterData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE) : drawData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
+    const formattedData = drawData
     return (
-        <div className="flex items-center flex-col">
+        <div className="px-6 py-6">
+            <h1 className="text-2xl font-semibold mb-4">
+                Analysis Canadian Experience Class
+            </h1>
             <div className="w-280 pl-16 p-4 pb-8 bg-gray-50 rounded-xl shadow-lg mx-24 mb-12">
                 <FilterBox
                     options={drawOptions}
@@ -79,20 +82,20 @@ export default function DrawChart({ drawData }: DrawChartType) {
                     label="Filter by year"
                 />
             </div>
-
-            {mockData.length > 0 ? (
+            {/* your chart component */}
+            {formattedData.length > 0 ? (
                 <>
                     {/* pagination control */}
                     <PaginationControl page={page} setPage={setPage} data={filterData} totalPages={totalPages} />
                     <div className="overflow-x-auto w-full h-300">
                         <div style={{
-                            width: mockData.length > 30 ? mockData.length * 40 : "100%",
+                            width: formattedData.length > 30 ? formattedData.length * 40 : "100%",
                             minHeight: "400px",
                         }}>
                             <ChartContainer config={chartConfig}>
                                 <BarChart
                                     accessibilityLayer
-                                    data={mockData}
+                                    data={formattedData}
                                 >
                                     <CartesianGrid vertical={false} />
                                     <XAxis
@@ -107,12 +110,12 @@ export default function DrawChart({ drawData }: DrawChartType) {
                                     />
                                     <ChartTooltip content={<CustomTooltip />} />
                                     <YAxis
-                                        domain={[minBalance(mockData, addFilterType.length !== 0), maxBalance(mockData, addFilterType)]}
+                                        // domain={[minBalance(formattedData), maxBalance(formattedData)]}
                                         tickMargin={5}
                                         tickCount={5}
                                     />
                                     <Bar barSize={18} dataKey="drawCRS" radius={4}>
-                                        {mockData.map((entry, index) => (
+                                        {formattedData.map((entry, index) => (
                                             <Cell key={index} fill={getColorFromName(entry.drawName)} />
                                         ))}
                                         <LabelList

@@ -5,23 +5,28 @@ function toNum(str: string): number {
   return parseInt(str.replace(/,/g, ""), 10) || 0;
 }
 
-export async function GET(request: Request) {
-  // Cron job
-  const authHeader = request.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return new Response("Unauthorized", {
-      status: 401,
-    });
-  }
+export async function GET() {
+  // // Cron job
+  // const authHeader = request.headers.get("authorization");
+  // if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  //   return new Response("Unauthorized", {
+  //     status: 401,
+  //   });
+  // }
 
   try {
     // Make sure tables exist
     await createTables();
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${Date.now()}`, {
+    // const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${Date.now()}`, {
+    //   cache: "no-store",
+    // });
+
+    const url = `${process.env.NEXT_PUBLIC_API_URL}${Date.now()}`;
+    const res = await fetch(url, {
       cache: "no-store",
     });
-    console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
+
     if (!res.ok) {
       throw new Error(`Fetch failed: ${res.status}`);
     }

@@ -122,11 +122,14 @@ export const darkenHex = (hex: string, factor = 0.8) => {
 
 export const PAGE_SIZE = 30;
 
-export const minBalance = (data: InvitationData[]) => {
-  // ! disable min
-  // const findMinScore = Math.min(...data.map(item => Number(item.drawCRS))) - 100;
-  return 0;
-  // return findMinScore > 0 ? findMinScore : 0;
+export const minBalance = (data: InvitationData[], fullChart: boolean = true) => {
+  if (!fullChart) return 0
+
+  const addCeil = 10;
+  const findmin = Math.ceil(
+    (Math.min(...data.map(item => Number(item.drawCRS))) - addCeil) / addCeil
+  ) * addCeil;
+  return findmin;
 };
 
 export const maxBalance = (data: InvitationData[], addFilterType: string[]) => {
