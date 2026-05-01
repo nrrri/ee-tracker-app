@@ -7,20 +7,17 @@ import DrawChart from "./DrawChart";
 
 type DrawDataType = {
     drawData: InvitationData[];
-    // isChart: boolean;
-    // setIsChart: React.Dispatch<React.SetStateAction<boolean>>;
-
 }
 export default function DrawData({ drawData }: DrawDataType) {
-    const [isChart, setIsChart] = useState<boolean>(true)
+    const [openTable, setOpenTable] = useState<boolean>(true)
 
     return (
         <div>
             {/* Header */}
-            <HeaderToggle title={'Round of Invitations'} openTable={isChart} onToggle={() => setIsChart(!isChart)} />
+            <HeaderToggle title={'Round of Invitations'} openTable={openTable} onToggle={() => setOpenTable(!openTable)} />
             {/* Details */}
             <div>
-                {!isChart ?
+                {openTable ?
                     <DrawTable drawData={drawData} /> : <DrawChart drawData={drawData} />
                 }
             </div>
