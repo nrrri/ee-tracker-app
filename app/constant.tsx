@@ -1,4 +1,5 @@
 import { type ChartConfig } from "@/components/ui/chart"
+import { InvitationData } from "./type/Type";
 
 
 export const poolRangeMain = [
@@ -58,7 +59,7 @@ export const keywordDrawType = [
   { key: 'cec', label: 'Canadian Experience Class' },
   { key: "provincial", label: "Provincial Nominee Program" },
   // Category Base
-  { key: "french", label: "French Language" },
+  { key: "french", label: "French" },
   { key: "healthcare", label: "Healthcare and Social Services Occupations" },
   { key: "stem", label: "STEM" },
   { key: "trade", label: "Trade Occupations" },
@@ -120,3 +121,19 @@ export const darkenHex = (hex: string, factor = 0.8) => {
 };
 
 export const PAGE_SIZE = 30;
+
+export const minBalance = (data: InvitationData[]) => {
+  // ! disable min
+  // const findMinScore = Math.min(...data.map(item => Number(item.drawCRS))) - 100;
+  return 0;
+  // return findMinScore > 0 ? findMinScore : 0;
+};
+
+export const maxBalance = (data: InvitationData[], addFilterType: string[]) => {
+  let addCeil = 50;
+  if (addFilterType.length > 0) addCeil = 10;
+  const findMax = Math.ceil(
+    (Math.max(...data.map(item => Number(item.drawCRS))) + addCeil) / addCeil
+  ) * addCeil;
+  return findMax;
+};
