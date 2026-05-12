@@ -182,6 +182,7 @@ export default function AnalysisDraw() {
                             options={drawOptions}
                             addFilterType={addFilterType}
                             setAddFilterType={setAddFilterType}
+                            pool={false}
                         />
                     </div>
                     {/* <FilterBox
