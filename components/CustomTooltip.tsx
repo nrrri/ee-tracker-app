@@ -58,3 +58,77 @@ export const CustomTooltipSummary = ({ active, payload }: TooltipProps) => {
         </div>
     );
 };
+
+export const CustomTooltipAnalysis = ({
+    active,
+    payload,
+}: TooltipProps) => {
+    if (!active || !payload?.length) return null;
+
+    const data = payload[0].payload;
+
+    return (
+        <div
+            className="
+        rounded-xl
+        border
+        border-gray-200
+        bg-white
+        p-3
+        text-sm
+        shadow-sm
+      "
+        >
+            <p className="mb-2 font-semibold text-gray-800">
+                {data.label}
+            </p>
+
+            <p className="text-gray-600">
+                CRS Score:{" "}
+                <span className="font-medium text-gray-800">
+                    {data.drawCRS}
+                </span>
+            </p>
+
+            <p className="text-gray-600">
+                Draw Size:{" "}
+                <span className="font-medium text-gray-800">
+                    {data.drawSize.toLocaleString()}
+                </span>
+            </p>
+
+            {data.candidatesIn500 && (
+                <div className="mt-2 border-t pt-2">
+                    <p className="text-gray-600">
+                        Candidates in Pool (500+)
+                        {data.dateInPool && (
+                            <>
+                                {" "}
+                                as of{" "}
+                                <span className="font-medium">
+                                    {data.dateInPool}
+                                </span>
+                            </>
+                        )}
+                        :{" "}
+                        <span className="font-medium text-gray-800">
+                            {data.candidatesIn500.toLocaleString()}
+                        </span>
+                    </p>
+
+                    <p className="mt-1 text-gray-600">
+                        Draw-to-Pool Ratio:{" "}
+                        <span className="font-medium text-gray-800">
+                            {(
+                                (data.drawSize /
+                                    data.candidatesIn500) *
+                                100
+                            ).toFixed(1)}
+                            %
+                        </span>
+                    </p>
+                </div>
+            )}
+        </div>
+    );
+};
