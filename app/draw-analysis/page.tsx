@@ -197,8 +197,10 @@ export default function AnalysisDraw() {
             {formattedData.length > 0 ? (
                 <>
                     {/* pagination control */}
+                    <div className="flex justify-center">
                     <PaginationControl page={page} setPage={setPage} data={filterData} totalPages={totalPages} />
-                    <div className="overflow-x-auto w-full h-300">
+                    </div>
+                    <div className="overflow-x-auto w-full">
                         <div style={{
                             width: "100%",
                             minHeight: "400px",
