@@ -12,7 +12,7 @@ export default function FilterDropdown({
     options,
     addFilterType,
     setAddFilterType,
-    pool,
+    pool = true,
     label = pool ? "Filter by range" : "Filter by category",
 }: FilterDropdownType) {
 

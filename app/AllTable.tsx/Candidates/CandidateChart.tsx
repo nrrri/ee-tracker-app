@@ -74,6 +74,8 @@ export default function CandidateChart({ poolData }: CandidateChartType) {
         }
     }, [addFilterType])
 
+    console.log('check', addFilterType)
+    console.log('check formattedDate', formattedDate)
     return (
         <div className="flex items-center flex-col">
             <div className="flex justify-center">
