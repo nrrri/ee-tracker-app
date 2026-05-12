@@ -120,9 +120,28 @@ export const darkenHex = (hex: string, factor = 0.8) => {
     .join("")}`;
 };
 
+export const fadeHex = (
+  hex: string,
+  factor = 0.2
+) => {
+  hex = hex.replace("#", "");
+
+  const r = parseInt(hex.slice(0, 2), 16);
+  const g = parseInt(hex.slice(2, 4), 16);
+  const b = parseInt(hex.slice(4, 6), 16);
+
+  const fadedR = Math.round(r + (255 - r) * factor);
+  const fadedG = Math.round(g + (255 - g) * factor);
+  const fadedB = Math.round(b + (255 - b) * factor);
+
+  return `#${[fadedR, fadedG, fadedB]
+    .map(v => v.toString(16).padStart(2, "0"))
+    .join("")}`;
+};
+
 export const PAGE_SIZE = 30;
 
-export const minBalance = (data: InvitationData[], fullChart: boolean = true) => {
+export const minBalance = (data: Partial<InvitationData>[], fullChart: boolean = true) => {
   if (!fullChart) return 0
 
   const addCeil = 10;
@@ -132,7 +151,7 @@ export const minBalance = (data: InvitationData[], fullChart: boolean = true) =>
   return findmin;
 };
 
-export const maxBalance = (data: InvitationData[], addFilterType: string[]) => {
+export const maxBalance = (data: Partial<InvitationData>[], addFilterType: string[]) => {
   let addCeil = 50;
   if (addFilterType.length > 0) addCeil = 10;
   const findMax = Math.ceil(
