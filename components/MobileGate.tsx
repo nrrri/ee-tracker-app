@@ -11,7 +11,7 @@ export default function MobileGate({ children }: { children: React.ReactNode }) 
     if (!isMobile || dismissed) return <>{children}</>;
 
     return (
-        
+
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md px-4">
             <div className="w-full max-w-sm bg-white rounded-xl shadow-xl p-6 text-center">
 
@@ -36,7 +36,7 @@ export default function MobileGate({ children }: { children: React.ReactNode }) 
                     </button>
 
                     <p className="text-xs text-gray-400">
-                        Recommended screen width: 1024px+
+                        Recommended screen width: 1080px+
                     </p>
                 </div>
             </div>
