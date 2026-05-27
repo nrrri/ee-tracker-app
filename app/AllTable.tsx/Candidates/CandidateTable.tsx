@@ -1,5 +1,5 @@
 "use client";
-import { keywordPoolType } from "@/app/constant";
+import { keywordPoolTypeTable } from "@/app/constant";
 import { NewCandidateSummary, PoolData } from "../../type/Type";
 
 type CandidateTableType = {
@@ -26,10 +26,10 @@ export default function CandidateTable({ poolData, newCandidateSummary }: Candid
             <thead className="bg-gray-100 sticky top-0 z-100">
                 <tr>
                     <th className={StyledHeaderTable}>Date</th>
-                    {keywordPoolType.map((col) => (
+                    {keywordPoolTypeTable.map((col) => (
                         <th key={col.key} className={`${StyledHeaderTable} ${col.key === "new500" || col.key === "newTotal"
-                                ? "w-20"
-                                : ""
+                            ? "w-20"
+                            : ""
                             }`}>
                             {col.label}
                         </th>
@@ -49,7 +49,7 @@ export default function CandidateTable({ poolData, newCandidateSummary }: Candid
                                 {draw.drawDistributionAsOn}
                             </td>
 
-                            {keywordPoolType.map((col) => {
+                            {keywordPoolTypeTable.map((col) => {
 
                                 const currentValue = draw[col.key];
                                 const nextValue = mergedPoolData[index + 1]?.[col.key];

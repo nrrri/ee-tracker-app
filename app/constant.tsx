@@ -78,6 +78,17 @@ export const keywordPoolType = [
   { key: "range401_450", label: "401 - 450" },
   { key: "range451_500", label: "451 - 500" },
   { key: "range501_600", label: "501 - 600" },
+  { key: "range601_1200", label: "600+" },
+  { key: "totalCandidates", label: "Total Candidates" },
+] as const;
+
+export const keywordPoolTypeTable = [
+  { key: "range0_300", label: "0 - 300" },
+  { key: "range301_350", label: "301 - 350" },
+  { key: "range351_400", label: "351 - 400" },
+  { key: "range401_450", label: "401 - 450" },
+  { key: "range451_500", label: "451 - 500" },
+  { key: "range501_600", label: "501 - 600" },
   { key: "new500", label: "New Candidates 501 - 600" },
   { key: "range601_1200", label: "600+" },
   { key: "totalCandidates", label: "Total Candidates" },
