@@ -36,7 +36,7 @@ export default function MobileGate({ children }: { children: React.ReactNode }) 
                     </button>
 
                     <p className="text-xs text-gray-400">
-                        Recommended screen width: 1080px+
+                        Recommended screen width: 1280px+
                     </p>
                 </div>
             </div>
