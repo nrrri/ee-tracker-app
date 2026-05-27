@@ -1,8 +1,8 @@
 import { CheckboxBasic } from "@/components/CheckboxBasic"
-import { Option } from "../app/type/Type";
+import { DataOption } from "../app/type/Type";
 
 type FilterBoxType = {
-    options: Option[];
+    options: DataOption[];
     addFilterType: string[];
     setAddFilterType: React.Dispatch<React.SetStateAction<string[]>>;
     setPage: React.Dispatch<React.SetStateAction<number>>;

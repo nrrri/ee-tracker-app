@@ -1,5 +1,5 @@
 "use client";
-import { InvitationData } from "@/app/type/Type";
+import { InvitationData, PoolData } from "@/app/type/Type";
 import DrawTable from "./DrawTable";
 import { HeaderToggle } from "@/components/HeaderToggle";
 import { useState } from "react";
@@ -7,8 +7,9 @@ import DrawChart from "./DrawChart";
 
 type DrawDataType = {
     drawData: InvitationData[];
+    poolData: PoolData[]
 }
-export default function DrawData({ drawData }: DrawDataType) {
+export default function DrawData({ drawData, poolData }: DrawDataType) {
     const [openTable, setOpenTable] = useState<boolean>(true)
 
     return (
@@ -18,7 +19,7 @@ export default function DrawData({ drawData }: DrawDataType) {
             {/* Details */}
             <div>
                 {openTable ?
-                    <DrawTable drawData={drawData} /> : <DrawChart drawData={drawData} />
+                    <DrawTable drawData={drawData} /> : <DrawChart drawData={drawData} poolData={poolData} />
                 }
             </div>
         </div>

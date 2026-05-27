@@ -7,7 +7,6 @@ import { useEffect, useRef, useState } from "react";
 import { InvitationData, PoolData } from "./type/Type";
 import AnalysisCard from "./Analysis/AnalysisCard";
 import SummaryInvitations from "./Analysis/SummaryInvitations";
-import Link from "next/link";
 
 export default function Home() {
   const [draws, setDraws] = useState<boolean>(true);
@@ -77,16 +76,6 @@ export default function Home() {
                 : "Rounds of Invitations"}
             </Button>
           </ButtonGroup>
-
-          <Link
-            href={{
-              pathname: "/draw-analysis",
-            }}
-          >
-            <Button className="w-full sm:w-auto">
-              CEC Insights
-            </Button>
-          </Link>
         </div>
 
         {/* Table */}

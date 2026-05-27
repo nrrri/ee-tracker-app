@@ -1,59 +1,32 @@
 "use client";
 
 import { PaginationControl } from "@/components/PaginationControl";
-import { InvitationData, PoolData } from "../type/Type";
 import { ChartContainer } from "@/components/ui/chart";
 import { Bar, CartesianGrid, Cell, ComposedChart, LabelList, Legend, Line, Tooltip, XAxis, YAxis } from "recharts";
-import { chartConfig, fadeHex, getColorFromName, keywordDrawType, maxBalance, minBalance, PAGE_SIZE } from "../constant";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { CustomTooltipAnalysis } from "@/components/CustomTooltip";
 import FilterDropdown from "@/components/FilterDropdown";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Undo2 } from "lucide-react";
+import { DataOption, InvitationData, PoolData } from "@/app/type/Type";
+import { chartConfig, fadeHex, getColorFromName, maxBalance, minBalance, PAGE_SIZE } from "@/app/constant";
 
+type DrawChartByYearTracingProp = {
+    drawData: InvitationData[]
+    poolData: PoolData[]
+    drawOptions: DataOption[]
+}
 
-export default function AnalysisDraw() {
-    const [drawData, setDrawData] = useState<InvitationData[]>([]);
-    const [poolData, setPoolData] = useState<PoolData[]>([]);
+export default function DrawChartByYearTracing({ drawData, poolData, drawOptions }: DrawChartByYearTracingProp) {
     const [addFilterType, setAddFilterType] = useState<string[]>(['Canadian Experience Class']);
     // const [selectedYears, setSelectedYears] = useState<string[]>([]);
-    const [filterData, setFilterData] = useState<InvitationData[]>(drawData)
+    const [filterData, setFilterData] = useState<InvitationData[]>([])
     const [page, setPage] = useState(1);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const filteredDraws: InvitationData[] = Object(drawData).filter((item: any) => new Date(item.drawDateFull).getFullYear() > 2023)
 
-    // fetching data
-    const hasFetched = useRef(false);
-
-    useEffect(() => {
-        if (hasFetched.current) return;
-
-        hasFetched.current = true;
-
-        const fetchData = async () => {
-            const [drawsRes, poolRes] = await Promise.all([
-                fetch("/api/draws"),
-                fetch("/api/candidate-pool"),
-            ]);
-
-            const { draws } = await drawsRes.json();
-            const { pool } = await poolRes.json();
-
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const filteredDraws = Object(draws).filter((item: any) => new Date(item.drawDateFull).getFullYear() > 2023)
-            setDrawData(filteredDraws);
-            setPoolData(pool);
-        };
-
-        fetchData();
-    }, []);
-
-
-    const drawOptions = Object.values(keywordDrawType);
-
-    const totalPages = filterData.length > 0 ? Math.ceil(filterData.length / PAGE_SIZE) : Math.ceil(drawData.length / PAGE_SIZE)
+    const totalPages = filterData.length > 0 ? Math.ceil(filterData.length / PAGE_SIZE) : Math.ceil(filteredDraws.length / PAGE_SIZE)
 
     // derive year options from drawDate (not drawDistributionAsOn)
-    // const yearOptions: Option[] = Array.from(
+    // const yearOptions: DataOption[] = Array.from(
     //     new Set(drawData.map(d => new Date(d.drawDate).getFullYear()))
     // )
     //     .sort((a, b) => b - a)
@@ -76,13 +49,15 @@ export default function AnalysisDraw() {
     //         );
     // };
 
-
     useEffect(() => {
-        setFilterData(drawData.filter((d) => d.drawName === 'Canadian Experience Class'));
-    }, [drawData])
+        setFilterData(filteredDraws.filter((d) => d.drawName === 'Canadian Experience Class'));
+        console.log('debug filteredDraws', filteredDraws)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+    
     // re-run whenever category or year filter changes
     useEffect(() => {
-        let result = drawData;
+        let result = filteredDraws;
 
         // if (selectedYears.length > 0) result = filterByYear(result);
         result = filterByCategory(result)
@@ -111,7 +86,7 @@ export default function AnalysisDraw() {
         };
     });
 
-    drawData.sort((a, b) => {
+    filteredDraws.sort((a, b) => {
         const da = new Date(a.drawDateFull);
         const db = new Date(b.drawDateFull);
 
@@ -127,7 +102,7 @@ export default function AnalysisDraw() {
     // unique years
     const years = [
         ...new Set(
-            drawData.map((item) =>
+            filteredDraws.map((item) =>
                 new Date(item.drawDateFull).getFullYear()
             )
         ),
@@ -156,36 +131,17 @@ export default function AnalysisDraw() {
 
     const formattedData = chartData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
     return (
-        <div>
-
-            <div className="m-8 text-3xl">CEC Insights</div>
-
-            <div className="flex justify-end mr-8 gap-1">
-                {/* <ButtonGroup>
-                    <Button variant="outline" size="lg" className="hover:bg-transparent ">Go to</Button>
-                    {
-                        <Button variant="outline" size="lg"></Button>
-                    }
-                </ButtonGroup> */}
-                <Link href={{
-                    pathname: "/",
-                }}>
-                    <Button>
-                        Dashboard
-                        <Undo2 />
-                    </Button>
-                </Link>
-            </div>
+        <div className="overflow-x-auto w-full h-300">
             <div className="flex justify-center">
-                <div className="w-180 pl-16 p-4 pb-8 bg-gray-50 rounded-xl shadow-lg mx-24 mb-12">
-                    <div className="border-b pb-4">
+                <div className="w-180 pl-16 p-4 bg-gray-50 rounded-xl shadow-lg mx-24 mb-12">
+                    {/* <div className="border-b pb-4"> */}
                         <FilterDropdown
                             options={drawOptions}
                             addFilterType={addFilterType}
                             setAddFilterType={setAddFilterType}
                             pool={false}
                         />
-                    </div>
+                    {/* </div> */}
                     {/* <FilterBox
                     options={yearOptions}
                     addFilterType={selectedYears}

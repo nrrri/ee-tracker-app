@@ -1,0 +1,134 @@
+import { chartConfig, getColorFromName, keywordDrawType, maxBalance, minBalance, PAGE_SIZE } from "@/app/constant";
+import { DataOption, InvitationData } from "@/app/type/Type";
+import { CustomTooltip } from "@/components/CustomTooltip";
+import FilterBox from "@/components/FilterBox";
+import { PaginationControl } from "@/components/PaginationControl";
+import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
+import { useEffect, useState } from "react";
+import { Bar, BarChart, CartesianGrid, Cell, LabelList, XAxis, YAxis } from "recharts";
+
+type DrawChartByTimelineProps = {
+    drawData: InvitationData[]
+}
+
+export default function DrawChartByTimeline({ drawData }: DrawChartByTimelineProps) {
+    const [addFilterType, setAddFilterType] = useState<string[]>([]);
+    const [selectedYears, setSelectedYears] = useState<string[]>([]);
+    const [filterData, setFilterData] = useState<InvitationData[]>(drawData)
+    const [page, setPage] = useState(1);
+
+    const drawOptions: DataOption[] = Object.values(keywordDrawType);
+
+    const filterByCategory = (data: InvitationData[]) => {
+        return data.filter(item =>
+            addFilterType.some(k => item.drawName.toLocaleLowerCase().includes(k.toLocaleLowerCase()))
+        );
+    };
+
+    const filterByYear = (data: InvitationData[]) => {
+        return selectedYears.length === 0
+            ? data
+            : data.filter(d =>
+                selectedYears.includes(String(new Date(d.drawDate).getFullYear()))
+            );
+    };
+
+    // derive year options from drawDate (not drawDistributionAsOn)
+    const yearOptions: DataOption[] = Array.from(
+        new Set(drawData.map(d => new Date(d.drawDate).getFullYear()))
+    )
+        .sort((a, b) => b - a)
+        .map(year => ({
+            key: String(year),
+            label: String(year),
+        }));
+
+    // re-run whenever category or year filter changes
+    useEffect(() => {
+        let result = drawData;
+
+        if (selectedYears.length > 0) result = filterByYear(result);
+        if (addFilterType.length > 0) result = filterByCategory(result);
+
+        setFilterData(result);
+        setPage(1);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [addFilterType, selectedYears]);
+
+    const totalPages = filterData.length > 0 ? Math.ceil(filterData.length / PAGE_SIZE) : Math.ceil(drawData.length / PAGE_SIZE)
+    const mockData = filterData.length > 0 ? filterData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE) : drawData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+    return (
+        <>
+
+            <div className="w-280 pl-16 p-4 pb-8 bg-gray-50 rounded-xl shadow-lg mx-24 mb-12">
+                <FilterBox
+                    options={drawOptions}
+                    addFilterType={addFilterType}
+                    setAddFilterType={setAddFilterType}
+                    setPage={setPage}
+                    label="Filter by Categories"
+                />
+                <FilterBox
+                    options={yearOptions}
+                    addFilterType={selectedYears}
+                    setAddFilterType={setSelectedYears}
+                    setPage={setPage}
+                    label="Filter by year"
+                />
+            </div>
+            {
+                filterData.length > 0 ?
+                    <>
+                        {/* pagination control */}
+                        <PaginationControl page={page} setPage={setPage} data={filterData} totalPages={totalPages} />
+
+                        {/* Chart */}
+                        <div className="overflow-x-auto w-full h-300">
+                            <div style={{
+                                width: mockData.length > 30 ? mockData.length * 40 : "100%",
+                                minHeight: "400px",
+                            }}>
+                                <ChartContainer config={chartConfig}>
+                                    <BarChart
+                                        accessibilityLayer
+                                        data={mockData}
+                                    >
+                                        <CartesianGrid vertical={false} />
+                                        <XAxis
+                                            dataKey="drawDateFull"
+                                            tickLine={false}
+                                            tickMargin={60}
+                                            axisLine={false}
+                                            tickFormatter={(value) => value}
+                                            angle={-90}
+                                            height={150}
+                                            width={20}
+                                        />
+                                        <ChartTooltip content={<CustomTooltip />} />
+                                        <YAxis
+                                            domain={[minBalance(mockData, addFilterType.length !== 0), maxBalance(mockData, addFilterType)]}
+                                            tickMargin={5}
+                                            tickCount={5}
+                                        />
+                                        <Bar barSize={18} dataKey="drawCRS" radius={4}>
+                                            {mockData.map((entry, index) => (
+                                                <Cell key={index} fill={getColorFromName(entry.drawName)} />
+                                            ))}
+                                            <LabelList
+                                                position="top"
+                                                offset={12}
+                                                className="fill-foreground"
+                                                fontSize={12}
+                                                formatter={(value: number) => value.toLocaleString()}
+                                            />
+                                        </Bar>
+                                    </BarChart>
+                                </ChartContainer>
+                            </div>
+                        </div>
+                    </> : <div>No draw in this category yet</div>
+            }
+        </>
+    )
+}

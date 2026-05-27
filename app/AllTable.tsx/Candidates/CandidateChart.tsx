@@ -8,7 +8,7 @@ import { chartConfig, darkenHex, getColorFromName, keywordPoolType, PAGE_SIZE } 
 import { CustomTooltip } from "@/components/CustomTooltip"
 import FilterDropdown from "@/components/FilterDropdown"
 import FilterBox from "@/components/FilterBox"
-import { Option } from "@/app/type/Type" // ← fixed import path
+import { DataOption } from "@/app/type/Type" // ← fixed import path
 import { PaginationControl } from "@/components/PaginationControl"
 
 type CandidateChartType = {
@@ -24,7 +24,7 @@ export default function CandidateChart({ poolData }: CandidateChartType) {
     const poolOptions = Object.values(keywordPoolType);
 
     // derive year options dynamically from poolData
-    const yearOptions: Option[] = Array.from(
+    const yearOptions: DataOption[] = Array.from(
         new Set(poolData.map(d => new Date(d.drawDistributionAsOn).getFullYear()))
     )
         .sort((a, b) => b - a)

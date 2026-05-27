@@ -96,7 +96,7 @@ export type TotalInvitation = {
   military: number;
 };
 
-export type Option = {
+export type DataOption = {
   key: string;
   label: string;
 };
