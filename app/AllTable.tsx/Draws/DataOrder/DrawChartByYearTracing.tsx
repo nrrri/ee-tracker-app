@@ -51,10 +51,9 @@ export default function DrawChartByYearTracing({ drawData, poolData, drawOptions
 
     useEffect(() => {
         setFilterData(filteredDraws.filter((d) => d.drawName === 'Canadian Experience Class'));
-        console.log('debug filteredDraws', filteredDraws)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-    
+
     // re-run whenever category or year filter changes
     useEffect(() => {
         let result = filteredDraws;
@@ -135,12 +134,12 @@ export default function DrawChartByYearTracing({ drawData, poolData, drawOptions
             <div className="flex justify-center">
                 <div className="w-180 pl-16 p-4 bg-gray-50 rounded-xl shadow-lg mx-24 mb-12">
                     {/* <div className="border-b pb-4"> */}
-                        <FilterDropdown
-                            options={drawOptions}
-                            addFilterType={addFilterType}
-                            setAddFilterType={setAddFilterType}
-                            pool={false}
-                        />
+                    <FilterDropdown
+                        options={drawOptions}
+                        addFilterType={addFilterType}
+                        setAddFilterType={setAddFilterType}
+                        pool={false}
+                    />
                     {/* </div> */}
                     {/* <FilterBox
                     options={yearOptions}
