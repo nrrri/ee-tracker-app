@@ -85,13 +85,18 @@ export default function SummaryInvitations({ drawData, currYear }: SummaryInvita
     // dynamic height: 52px per bar
     const chartHeight = chartData.length * 42;
     return (
-        <div className="flex flex-col w-150 bg-white border border-gray-200 rounded-2xl shadow-sm p-6 items-center">
-            <h1 className="text-xl font-semibold text-gray-800 mb-1">Draw Summary of {currYear}</h1>
-            <p className="text-gray-500 mb-4 text-l flex items-center gap-2">
+        <div className="flex flex-col w-full max-w-2xl bg-white border border-gray-200 rounded-2xl shadow-sm p-4 md:p-6 items-center">
+
+            <h1 className="text-lg md:text-xl font-semibold text-gray-800 mb-1 text-center">
+                Draw Summary of {currYear}
+            </h1>
+
+            <p className="text-gray-500 mb-4 text-sm md:text-base flex flex-wrap items-center gap-2 justify-center">
                 Total Invitations:
                 <span className="text-[#C71D36] font-bold">
                     {totalInvitationCurrentYear()}
                 </span>
+
                 <span className="text-xs flex items-center gap-1">
                     <a
                         href="https://www.canada.ca/en/immigration-refugees-citizenship/corporate/mandate/corporate-initiatives/levels/supplementary-immigration-levels-2026-2028.html"
@@ -104,77 +109,80 @@ export default function SummaryInvitations({ drawData, currYear }: SummaryInvita
                     </a>
                 </span>
             </p>
-            <ResponsiveContainer width="100%" height={chartHeight}>
-                <BarChart
-                    data={chartData}
-                    layout="vertical"
-                    margin={{ top: 0, right: 80, bottom: 0, left: 0 }}
-                >
-                    <XAxis
-                        type="number"
-                        hide={true}
-                    />
-                    <YAxis
-                        type="category"
-                        dataKey="name"
-                        tick={{ fontSize: 14, fill: '#000' }}
-                        axisLine={false}
-                        tickLine={false}
-                        width={155}
-                    />
-                    <Tooltip content={<CustomTooltipSummary />} />
-                    <Bar dataKey="currentYear" radius={[0, 3, 3, 0]} maxBarSize={28}>
-                        {chartData.map((drawName, index) => (
-                            <Cell
-                                key={index}
-                                fill={getColorFromName(drawName.name)}
-                            />
-                        ))}
-                        {/* shows "45,000 [12]" at end of each bar */}
-                        <LabelList
-                            content={({ x, y, width, height, value, index }) => {
-                                const item = chartData[index as number];
-                                return (
-                                    <text
-                                        x={Number(x) + Number(width) + 8}
-                                        y={Number(y) + Number(height) / 2}
-                                        dominantBaseline="middle"
-                                        fontSize={12}
-                                        fill="#6b7280"
-                                    >
-                                        {Number(value).toLocaleString()} [{item?.currentInvitations}]
-                                    </text>
-                                );
-                            }}
+
+            <div className="w-full overflow-x-auto">
+                <ResponsiveContainer width="100%" height={chartHeight}>
+                    <BarChart
+                        data={chartData}
+                        layout="vertical"
+                        margin={{ top: 0, right: 40, bottom: 0, left: 0 }}
+                    >
+                        <XAxis
+                            type="number"
+                            hide={true}
                         />
-                    </Bar>
-                    <Bar dataKey="prevYear" radius={[0, 3, 3, 0]} maxBarSize={28}>
-                        {chartData.map((drawName, index) => (
-                            <Cell
-                                key={`${drawName}-${index}`}
-                                fill={'#dfdfdf'}
-                            />
-                        ))}
-                        {/* shows "45,000 [12]" at end of each bar */}
-                        <LabelList
-                            content={({ x, y, width, height, value, index }) => {
-                                const item = chartData[index as number];
-                                return (
-                                    <text
-                                        x={Number(x) + Number(width) + 8}
-                                        y={Number(y) + Number(height) / 2}
-                                        dominantBaseline="middle"
-                                        fontSize={12}
-                                        fill="#6b7280"
-                                    >
-                                        {Number(value).toLocaleString()} [{item?.prevInvitations}]
-                                    </text>
-                                );
-                            }}
+                        <YAxis
+                            type="category"
+                            dataKey="name"
+                            tick={{ fontSize: 14, fill: '#000' }}
+                            axisLine={false}
+                            tickLine={false}
+                            width={155}
                         />
-                    </Bar>
-                </BarChart>
-            </ResponsiveContainer>
+                        <Tooltip content={<CustomTooltipSummary />} />
+                        <Bar dataKey="currentYear" radius={[0, 3, 3, 0]} maxBarSize={28}>
+                            {chartData.map((drawName, index) => (
+                                <Cell
+                                    key={index}
+                                    fill={getColorFromName(drawName.name)}
+                                />
+                            ))}
+                            {/* shows "45,000 [12]" at end of each bar */}
+                            <LabelList
+                                content={({ x, y, width, height, value, index }) => {
+                                    const item = chartData[index as number];
+                                    return (
+                                        <text
+                                            x={Number(x) + Number(width) + 8}
+                                            y={Number(y) + Number(height) / 2}
+                                            dominantBaseline="middle"
+                                            fontSize={12}
+                                            fill="#6b7280"
+                                        >
+                                            {Number(value).toLocaleString()} [{item?.currentInvitations}]
+                                        </text>
+                                    );
+                                }}
+                            />
+                        </Bar>
+                        <Bar dataKey="prevYear" radius={[0, 3, 3, 0]} maxBarSize={28}>
+                            {chartData.map((drawName, index) => (
+                                <Cell
+                                    key={`${drawName}-${index}`}
+                                    fill={'#dfdfdf'}
+                                />
+                            ))}
+                            {/* shows "45,000 [12]" at end of each bar */}
+                            <LabelList
+                                content={({ x, y, width, height, value, index }) => {
+                                    const item = chartData[index as number];
+                                    return (
+                                        <text
+                                            x={Number(x) + Number(width) + 8}
+                                            y={Number(y) + Number(height) / 2}
+                                            dominantBaseline="middle"
+                                            fontSize={12}
+                                            fill="#6b7280"
+                                        >
+                                            {Number(value).toLocaleString()} [{item?.prevInvitations}]
+                                        </text>
+                                    );
+                                }}
+                            />
+                        </Bar>
+                    </BarChart>
+                </ResponsiveContainer>
+            </div>
         </div>
     );
 }

@@ -18,16 +18,26 @@ export default function AnalysisCard({ drawData }: AnalysisCardType) {
     ];
 
     return (
-        <div className="w-150 bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
-            <h1 className="text-xl font-semibold text-gray-800 mb-1">Latest Round</h1>
-            <p className="text-[#C71D36] font-bold mb-4 text-l">{latest?.drawName}</p>
+        <div className="w-full max-w-md bg-white border border-gray-200 rounded-2xl shadow-sm p-4 md:p-6">
+            <h1 className="text-lg md:text-xl font-semibold text-gray-800 mb-1">
+                Latest Round
+            </h1>
+
+            <p className="text-[#C71D36] font-bold mb-4 text-base md:text-lg wrap-break-word">
+                {latest?.drawName}
+            </p>
 
             <table className="w-full text-sm">
                 <tbody>
                     {rows.map(({ label, value }) => (
                         <tr key={label} className="border-t border-gray-100">
-                            <td className="py-2.5 pr-4 text-gray-500 font-medium w-36">{label}</td>
-                            <td className="py-2.5 text-gray-800">{value ?? '—'}</td>
+                            <td className="py-2.5 pr-3 text-gray-500 font-medium w-28 md:w-36">
+                                {label}
+                            </td>
+
+                            <td className="py-2.5 text-gray-800 wrap-break-word">
+                                {value ?? "—"}
+                            </td>
                         </tr>
                     ))}
                 </tbody>

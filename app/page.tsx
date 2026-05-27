@@ -15,7 +15,7 @@ export default function Home() {
   const [poolData, setPoolData] = useState<PoolData[]>([])
   const currYear = new Date().getFullYear();
   const hasFetched = useRef(false);
-  
+
   useEffect(() => {
     if (hasFetched.current) return;
 
@@ -40,30 +40,63 @@ export default function Home() {
   return (
     <div>
       <main>
-        <div className="m-8 text-3xl">Express Entry Tracker</div>
-        <div className="flex justify-center gap-4 mb-8">
+        {/* Header */}
+        <div className="mx-4 mt-4 mb-6 text-2xl md:text-3xl font-semibold">
+          Express Entry Tracker
+        </div>
+
+        {/* Summary Cards */}
+        <div className="flex flex-col md:flex-row justify-center gap-4 px-4 mb-8">
           <AnalysisCard drawData={drawData} />
-          <SummaryInvitations drawData={drawData} currYear={currYear} />
+          <SummaryInvitations
+            drawData={drawData}
+            currYear={currYear}
+          />
           {/* todo: add AI summary trend each new draw */}
         </div>
+
+        {/* Navigation */}
         {/* todo: move menu to isolate component */}
-        <div className="flex justify-end mr-8 gap-1">
-          <ButtonGroup>
-            <Button variant="outline" size="lg" className="hover:bg-transparent ">Go to</Button>
-            {
-              <Button onClick={(() => setDraws(!draws))} variant="outline" size="lg">{draws ? 'Candidate Pool' : 'Rounds of invitations'}</Button>
-            }
+        <div className="flex flex-col sm:flex-row justify-end gap-2 px-4 md:px-8 mb-4">
+          <ButtonGroup className="w-full sm:w-auto justify-end">
+            <Button
+              variant="outline"
+              size="lg"
+              className="hover:bg-transparent"
+            >
+              Go to
+            </Button>
+
+            <Button
+              onClick={() => setDraws(!draws)}
+              variant="outline"
+              size="lg"
+            >
+              {draws
+                ? "Candidate Pool"
+                : "Rounds of Invitations"}
+            </Button>
           </ButtonGroup>
 
-          <Link href={{
-            pathname: "/draw-analysis",
-          }}>
-            <Button>
+          <Link
+            href={{
+              pathname: "/draw-analysis",
+            }}
+          >
+            <Button className="w-full sm:w-auto">
               CEC Insights
             </Button>
           </Link>
         </div>
-        <AllTable tableType={draws} drawData={drawData} poolData={poolData} />
+
+        {/* Table */}
+        <div className="overflow-x-auto">
+          <AllTable
+            tableType={draws}
+            drawData={drawData}
+            poolData={poolData}
+          />
+        </div>
       </main>
     </div>
   );
