@@ -62,21 +62,22 @@ export const CustomTooltipSummary = ({ active, payload }: TooltipProps) => {
 export const CustomTooltipAnalysis = ({
     active,
     payload,
-}: TooltipProps) => {
-    if (!active || !payload?.length) return null;
+    coordinate
+}: TooltipProps & {
+    coordinate?: { x: number; y: number };
+}) => {
+    if (!active || !payload?.length || !coordinate) return null;
 
     const data = payload[0].payload;
     return (
         <div
-            className="
-        rounded-xl
-        border
-        border-gray-200
-        bg-white
-        p-3
-        text-sm
-        shadow-sm
-      "
+            style={{
+                position: "absolute",
+                left: coordinate.x + 8,
+                top: coordinate.y - 180,
+                pointerEvents: "none",
+            }}
+            className="w-100 rounded-xl border border-gray-200 bg-white/80 p-3 text-sm shadow-sm"
         >
             <p className="mb-2 font-semibold text-gray-800">
                 {data.label}
