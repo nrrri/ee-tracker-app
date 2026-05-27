@@ -78,8 +78,10 @@ export const keywordPoolType = [
   { key: "range401_450", label: "401 - 450" },
   { key: "range451_500", label: "451 - 500" },
   { key: "range501_600", label: "501 - 600" },
+  { key: "new500", label: "New Candidates 501 - 600" },
   { key: "range601_1200", label: "600+" },
   { key: "totalCandidates", label: "Total Candidates" },
+  { key: "newTotal", label: "New Candidates" },
 ] as const;
 
 export const allCategorise = ["Canadian Experience Class", "Provincial Nominee Program", "French-Language", "Healthcare and Social Services Occupations", "STEM", "Trade Occupations", "Education occupations", "Transport occupations", "Physicians", "Senior Managers",]

@@ -100,3 +100,21 @@ export type Option = {
   key: string;
   label: string;
 };
+
+export type DrawData = {
+  drawDistributionAsOn: string;
+  drawSize: number;
+  drawName: string;
+};
+
+export type DrawSummary = {
+  drawDistributionAsOn: string;
+  totalDraw: number;
+  cecDrawSize: number;
+};
+
+export type NewCandidateSummary = {
+  drawDistributionAsOn: string;
+  newCandidate: number;
+  newCandidateOver500: number;
+};

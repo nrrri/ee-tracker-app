@@ -14,7 +14,7 @@ export default function AllTable({ tableType, drawData, poolData }: AllTableType
             {tableType ?
                 <DrawData drawData={drawData} />
                 :
-                <CandidateData poolData={poolData} />
+                <CandidateData poolData={poolData} drawData={drawData} />
             }
         </div>
     );
