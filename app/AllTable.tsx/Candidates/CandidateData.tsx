@@ -93,7 +93,7 @@ export default function CandidateData({ poolData, drawData }: CandidateDataType)
             {/* Toggle menu */}
             <HeaderToggle title={'CRS score distribution of candidates in the pool'} openTable={openTable} onToggle={() => setOpenTable(!openTable)} />
             <div>
-                {openTable ? <CandidateTable poolData={poolData} newCandidateSummary={newCandidateSummary(poolData, summaryData)} /> : <CandidateChart poolData={poolData} />}
+                {openTable ? <CandidateTable poolData={poolData} newCandidateSummary={newCandidateSummary(poolData, summaryData)} /> : <CandidateChart poolData={poolData} newCandidateSummary={newCandidateSummary(poolData, summaryData)} />}
             </div>
         </div>
     )

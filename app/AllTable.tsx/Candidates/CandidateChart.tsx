@@ -1,10 +1,10 @@
 "use client"
 
-import { PoolData } from "../../type/Type"
+import { NewCandidateSummary, PoolData } from "../../type/Type"
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart"
 import { useEffect, useState } from "react"
 import { Bar, BarChart, CartesianGrid, Cell, LabelList, XAxis, YAxis } from "recharts"
-import { chartConfig, darkenHex, getColorFromName, keywordPoolType, PAGE_SIZE } from "@/app/constant"
+import { chartConfig, darkenHex, getColorFromName, keywordPoolTypeTable, PAGE_SIZE } from "@/app/constant"
 import { CustomTooltip } from "@/components/CustomTooltip"
 import FilterDropdown from "@/components/FilterDropdown"
 import FilterBox from "@/components/FilterBox"
@@ -13,19 +13,29 @@ import { PaginationControl } from "@/components/PaginationControl"
 
 type CandidateChartType = {
     poolData: PoolData[]
+    newCandidateSummary: NewCandidateSummary[];
 }
 
-export default function CandidateChart({ poolData }: CandidateChartType) {
+export default function CandidateChart({ poolData, newCandidateSummary }: CandidateChartType) {
     const [addFilterType, setAddFilterType] = useState<string[]>(["totalCandidates"]);
     const [selectedYears, setSelectedYears] = useState<string[]>([]);
     const [formattedAddFilterType, setFormattedFilterData] = useState<string>("totalCandidates")
     const [page, setPage] = useState(1);
 
-    const poolOptions = Object.values(keywordPoolType);
+    const poolOptions = Object.values(keywordPoolTypeTable);
+
+    const mergedPoolData = poolData.map((pool) => {
+        const findSumData = newCandidateSummary.find((newCan) => newCan.drawDistributionAsOn === pool.drawDistributionAsOn)
+        return {
+            ...pool,
+            new500: findSumData?.newCandidateOver500,
+            newTotal: findSumData?.newCandidate
+        }
+    })
 
     // derive year options dynamically from poolData
     const yearOptions: DataOption[] = Array.from(
-        new Set(poolData.map(d => new Date(d.drawDistributionAsOn).getFullYear()))
+        new Set(mergedPoolData.map(d => new Date(d.drawDistributionAsOn).getFullYear()))
     )
         .sort((a, b) => b - a)
         .map(year => ({
@@ -33,7 +43,7 @@ export default function CandidateChart({ poolData }: CandidateChartType) {
             label: String(year),
         }));
 
-    const normalizedData = poolData.map(d => ({
+    const normalizedData = mergedPoolData.map(d => ({
         ...d,
         year: new Date(d.drawDistributionAsOn).getFullYear(),
     }));
@@ -77,7 +87,7 @@ export default function CandidateChart({ poolData }: CandidateChartType) {
     return (
         <div className="flex items-center flex-col">
             <div className="flex justify-center">
-                <div className="p-8 py-8 bg-gray-50 rounded-xl shadow-lg mx-24 mb-12">
+                <div className="w-200 p-8 py-8 bg-gray-50 rounded-xl shadow-lg mx-24 mb-12">
                     <div className="border-b pb-4">
                         <FilterDropdown
                             options={poolOptions}

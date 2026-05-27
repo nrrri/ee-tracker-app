@@ -29,7 +29,7 @@ export default function FilterBox({
     return (
         <div className="flex justify-center flex-col">
             <div className="my-4 font-bold text-start mr-10 pb-2">{label}</div>
-            <div className={`grid gap-4 w-260 text-start ${label === 'Filter by year' ? 'grid-cols-5' : 'grid-cols-4'}`}>
+            <div className={`grid w-200 gap-4 text-start ${label === 'Filter by year' ? 'grid-cols-3' : 'grid-cols-4'}`}>
                 {options.map(({ key, label }) => (
                     <CheckboxBasic
                         key={key}
