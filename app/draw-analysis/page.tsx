@@ -23,30 +23,30 @@ export default function AnalysisDraw() {
 
     // fetching data
     const hasFetched = useRef(false);
-      
-      useEffect(() => {
+
+    useEffect(() => {
         if (hasFetched.current) return;
-    
+
         hasFetched.current = true;
-    
+
         const fetchData = async () => {
-          const [drawsRes, poolRes] = await Promise.all([
-            fetch("/api/draws"),
-            fetch("/api/candidate-pool"),
-          ]);
-    
-          const { draws } = await drawsRes.json();
-          const { pool } = await poolRes.json();
-    
+            const [drawsRes, poolRes] = await Promise.all([
+                fetch("/api/draws"),
+                fetch("/api/candidate-pool"),
+            ]);
+
+            const { draws } = await drawsRes.json();
+            const { pool } = await poolRes.json();
+
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const filteredDraws = Object(draws).filter((item: any) => new Date(item.drawDateFull).getFullYear() > 2023)
             setDrawData(filteredDraws);
             setPoolData(pool);
         };
-    
+
         fetchData();
-      }, []);
-  
+    }, []);
+
 
     const drawOptions = Object.values(keywordDrawType);
 
@@ -107,6 +107,7 @@ export default function AnalysisDraw() {
             drawCRS: item.drawCRS,
             candidatesIn500: filterCandidates?.range501_600,
             dateInPool: item.drawDistributionAsOn,
+            dateCutOff: item.drawCutOff,
         };
     });
 
@@ -199,7 +200,7 @@ export default function AnalysisDraw() {
                 <>
                     {/* pagination control */}
                     <div className="flex justify-center">
-                    <PaginationControl page={page} setPage={setPage} data={filterData} totalPages={totalPages} />
+                        <PaginationControl page={page} setPage={setPage} data={filterData} totalPages={totalPages} />
                     </div>
                     <div className="overflow-x-auto w-full">
                         <div style={{

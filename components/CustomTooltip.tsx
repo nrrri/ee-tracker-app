@@ -66,7 +66,6 @@ export const CustomTooltipAnalysis = ({
     if (!active || !payload?.length) return null;
 
     const data = payload[0].payload;
-
     return (
         <div
             className="
@@ -94,6 +93,13 @@ export const CustomTooltipAnalysis = ({
                 Draw Size:{" "}
                 <span className="font-medium text-gray-800">
                     {data.drawSize.toLocaleString()}
+                </span>
+            </p>
+
+            <p className="text-gray-600">
+                Date Cut-off:{" "}
+                <span className="font-medium text-gray-800">
+                    {data.dateCutOff.toLocaleString()}
                 </span>
             </p>
 
