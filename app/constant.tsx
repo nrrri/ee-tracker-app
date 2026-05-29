@@ -26,6 +26,15 @@ export const drawType = {
     */
 }
 
+export const HEADERS = [
+  "Draw Number",
+  "Date",
+  "Round Type",
+  "Invitations Issued",
+  "CRS Score of Lowest-Ranked Candidate Invited",
+  "Tie-Breaking Rule",
+] as const;
+
 export const keywordColors: Record<string, string> = {
   Provincial: "#4BD296",
   // Provincial: "#F09E7D",

@@ -1,53 +1,91 @@
 "use client";
-import { getColorFromName } from "@/app/constant";
+
+import { getColorFromName, HEADERS } from "@/app/constant";
 import { InvitationData } from "../../type/Type";
 
-type DrawTableType = {
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type DrawTableProps = {
     drawData: InvitationData[];
 };
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-export default function DrawTable({ drawData }: DrawTableType) {
+function extractYear(dateString?: string): string {
+    return dateString?.split(", ")[1] ?? "";
+}
+
+function getRowBorderClass(draw: InvitationData, next: InvitationData | undefined): string {
+    if (!next) return "border-0";
+    const crossesYearBoundary = extractYear(draw.drawDistributionAsOn) !== extractYear(next.drawDistributionAsOn);
+    return crossesYearBoundary ? "border-b-4 border-b-black" : "border-0";
+}
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function TableHeader() {
+    return (
+        <thead className="bg-gray-100">
+            <tr>
+                {HEADERS.map((heading) => (
+                    <th key={heading} className={cx.header}>
+                        {heading}
+                    </th>
+                ))}
+            </tr>
+        </thead>
+    );
+}
+
+type DrawRowProps = {
+    draw: InvitationData;
+    next: InvitationData | undefined;
+};
+
+function DrawRow({ draw, next }: DrawRowProps) {
+    const borderClass = getRowBorderClass(draw, next);
+
+    return (
+        <tr
+            key={draw.drawNumber}
+            className={`hover:bg-gray-100 ${borderClass}`}
+        >
+            <td className={cx.cell}>{draw.drawNumber}</td>
+            <td className={cx.cell}>{draw.drawDateFull}</td>
+            <td
+                className={`${cx.cell} border-l-30`}
+                style={{ borderLeftColor: getColorFromName(draw.drawName) }}
+            >
+                {draw.drawName}
+            </td>
+            <td className={cx.cell}>{draw.drawSize.toLocaleString()}</td>
+            <td className={cx.cell}>{draw.drawCRS}</td>
+            <td className={cx.cell}>{draw.drawCutOff}</td>
+        </tr>
+    );
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
+
+export default function DrawTable({ drawData }: DrawTableProps) {
     return (
         <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-100">
-                <tr>
-                    <th className={StyledHeaderTable}>Draw Number</th>
-                    <th className={StyledHeaderTable}>Date</th>
-                    <th className={StyledHeaderTable}>Round type</th>
-                    <th className={StyledHeaderTable}>Invitations Issued</th>
-                    <th className={StyledHeaderTable}>CRS score of lowest-ranked candidate invited</th>
-                </tr>
-            </thead>
+            <TableHeader />
             <tbody className="bg-white divide-y divide-gray-100 text-gray-900">
-                {drawData.map((draw, index) => {
-                    const checkRange = index < drawData.length - 1;
-                    const currYear = draw.drawDistributionAsOn?.split(", ")[1] ?? "";
-                    const prevYear =
-                        checkRange
-                            ? drawData[index + 1]?.drawDistributionAsOn?.split(", ")[1] ?? ""
-                            : "";
-
-                    const borderClass = checkRange && currYear !== prevYear ? "border-b-4 border-b-black" : "border-0";
-                    
-                    return (
-                        <tr key={draw.drawNumber} className={`hover:bg-gray-100 ${borderClass}`} style={{ borderLeft: 1 }}>
-                            <td className={StyledBodyTable}>{draw.drawNumber}</td>
-                            <td className={StyledBodyTable}>{draw.drawDateFull}</td>
-                            <td style={{ borderLeftColor: getColorFromName(draw.drawName) }} className={`${StyledBodyTable} border-l-30`}>{draw.drawName}</td>
-                            <td className={StyledBodyTable}>{draw.drawSize.toLocaleString()}</td>
-                            <td className={StyledBodyTable}>{draw.drawCRS}</td>
-                        </tr>
-                    );
-                })}
+                {drawData.map((draw, index) => (
+                    <DrawRow
+                        key={draw.drawNumber}
+                        draw={draw}
+                        next={drawData[index + 1]}
+                    />
+                ))}
             </tbody>
         </table>
     );
 }
 
-const StyledHeaderTable = `
-px-6 py-3 text-center text-sm font-bold text-gray-500 tracking-wider
-`;
+// ─── Constants ────────────────────────────────────────────────────────────────
 
-const StyledBodyTable = `
-px-6 py-4 whitespace-nowrap border border-gray-200
-`;
+const cx = {
+    header: "px-6 py-3 text-center text-sm font-bold text-gray-500 tracking-wider",
+    cell: "px-6 py-4 whitespace-nowrap border border-gray-200",
+} as const;
