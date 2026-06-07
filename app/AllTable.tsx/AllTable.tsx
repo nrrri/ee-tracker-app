@@ -1,20 +1,21 @@
 "use client";
-import { InvitationData, PoolData } from "../type/Type";
+import { InvitationData, NewCandidateSummary, PoolData } from "../type/Type";
 import CandidateData from "./Candidates/CandidateData";
 import DrawData from "./Draws/DrawData";
 type AllTableType = {
     tableType: boolean;
     poolData: PoolData[];
     drawData: InvitationData[];
+    newCandidateSummary: NewCandidateSummary[];
 }
-export default function AllTable({ tableType, drawData, poolData }: AllTableType) {
+export default function AllTable({ tableType, drawData, poolData, newCandidateSummary }: AllTableType) {
 
     return (
         <div>
             {tableType ?
                 <DrawData drawData={drawData} poolData={poolData} />
                 :
-                <CandidateData poolData={poolData} drawData={drawData} />
+                <CandidateData poolData={poolData} newCandidateSummary={newCandidateSummary} />
             }
         </div>
     );

@@ -46,11 +46,7 @@ export default function SummaryInvitations({ drawData, currYear }: SummaryInvita
         .filter(d => d.drawYear === currYear)
         .forEach(curr => {
             const key = getCategory(curr.drawName);
-
-            if (!currMap.has(key)) {
-                currMap.set(key, { currentYear: 0, invitation: 0 });
-            }
-
+            if (!currMap.has(key)) currMap.set(key, { currentYear: 0, invitation: 0 });
             const entry = currMap.get(key)!;
             entry.currentYear += curr.drawSize;
             entry.invitation += 1;
@@ -60,11 +56,7 @@ export default function SummaryInvitations({ drawData, currYear }: SummaryInvita
         .filter(d => d.drawYear === currYear - 1)
         .forEach(curr => {
             const key = getCategory(curr.drawName);
-
-            if (!prevMap.has(key)) {
-                prevMap.set(key, { prevYear: 0, invitation: 0 });
-            }
-
+            if (!prevMap.has(key)) prevMap.set(key, { prevYear: 0, invitation: 0 });
             const entry = prevMap.get(key)!;
             entry.prevYear += curr.drawSize;
             entry.invitation += 1;
@@ -82,49 +74,51 @@ export default function SummaryInvitations({ drawData, currYear }: SummaryInvita
         }))
         .sort((a, b) => b.currentYear - a.currentYear);
 
-    // dynamic height: 52px per bar
     const chartHeight = chartData.length * 42;
+
     return (
-        <div className="flex flex-col w-full max-w-2xl bg-white border border-gray-200 rounded-2xl shadow-sm p-4 md:p-6 items-center">
+        <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-5 md:p-6">
+            {/* Card header — matches AnalysisCard / SumNewCandidates */}
+            <div className="flex items-center justify-between mb-5 pb-4 border-b border-gray-100">
+                <div>
+                    <h1 className="text-base font-semibold text-gray-900 text-start">
+                        Draw Summary of {currYear}
+                    </h1>
+                    <p className="text-xs text-gray-400 mt-0.5">Invitations by category vs prior year</p>
+                </div>
+            </div>
 
-            <h1 className="text-lg md:text-xl font-semibold text-gray-800 mb-1 text-center">
-                Draw Summary of {currYear}
-            </h1>
+            {/* Total invitations row — dot accent like drawName in AnalysisCard */}
+            <div className="flex items-center gap-2 mb-4">
+                <div className="w-2 h-2 rounded-full bg-[#C71D36]" />
+                <p className="text-sm text-gray-500">
+                    Total Invitations:{" "}
+                    <span className="text-[#C71D36] font-semibold">{totalInvitationCurrentYear()}</span>
+                </p>
+                <a
+                    href="https://www.canada.ca/en/immigration-refugees-citizenship/corporate/mandate/corporate-initiatives/levels/supplementary-immigration-levels-2026-2028.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-xs text-gray-400 hover:text-blue-500 transition-colors ml-1"
+                >
+                    /85,000–120,000
+                    <ExternalLink size={11} />
+                </a>
+            </div>
 
-            <p className="text-gray-500 mb-4 text-sm md:text-base flex flex-wrap items-center gap-2 justify-center">
-                Total Invitations:
-                <span className="text-[#C71D36] font-bold">
-                    {totalInvitationCurrentYear()}
-                </span>
-
-                <span className="text-xs flex items-center gap-1">
-                    <a
-                        href="https://www.canada.ca/en/immigration-refugees-citizenship/corporate/mandate/corporate-initiatives/levels/supplementary-immigration-levels-2026-2028.html"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1"
-                    >
-                        /85,000–120,000
-                        <ExternalLink size={12} />
-                    </a>
-                </span>
-            </p>
-
-            <div className="w-full overflow-x-auto">
+            {/* Chart */}
+            <div className="overflow-x-auto">
                 <ResponsiveContainer width="100%" height={chartHeight}>
                     <BarChart
                         data={chartData}
                         layout="vertical"
                         margin={{ top: 0, right: 40, bottom: 0, left: 0 }}
                     >
-                        <XAxis
-                            type="number"
-                            hide={true}
-                        />
+                        <XAxis type="number" hide={true} />
                         <YAxis
                             type="category"
                             dataKey="name"
-                            tick={{ fontSize: 14, fill: '#000' }}
+                            tick={{ fontSize: 12, fill: '#6b7280' }}
                             axisLine={false}
                             tickLine={false}
                             width={155}
@@ -132,12 +126,8 @@ export default function SummaryInvitations({ drawData, currYear }: SummaryInvita
                         <Tooltip content={<CustomTooltipSummary />} />
                         <Bar dataKey="currentYear" radius={[0, 3, 3, 0]} maxBarSize={28}>
                             {chartData.map((drawName, index) => (
-                                <Cell
-                                    key={index}
-                                    fill={getColorFromName(drawName.name)}
-                                />
+                                <Cell key={index} fill={getColorFromName(drawName.name)} />
                             ))}
-                            {/* shows "45,000 [12]" at end of each bar */}
                             <LabelList
                                 content={({ x, y, width, height, value, index }) => {
                                     const item = chartData[index as number];
@@ -146,7 +136,7 @@ export default function SummaryInvitations({ drawData, currYear }: SummaryInvita
                                             x={Number(x) + Number(width) + 8}
                                             y={Number(y) + Number(height) / 2}
                                             dominantBaseline="middle"
-                                            fontSize={12}
+                                            fontSize={11}
                                             fill="#6b7280"
                                         >
                                             {Number(value).toLocaleString()} [{item?.currentInvitations}]
@@ -157,12 +147,8 @@ export default function SummaryInvitations({ drawData, currYear }: SummaryInvita
                         </Bar>
                         <Bar dataKey="prevYear" radius={[0, 3, 3, 0]} maxBarSize={28}>
                             {chartData.map((drawName, index) => (
-                                <Cell
-                                    key={`${drawName}-${index}`}
-                                    fill={'#dfdfdf'}
-                                />
+                                <Cell key={`${drawName}-${index}`} fill="#dfdfdf" />
                             ))}
-                            {/* shows "45,000 [12]" at end of each bar */}
                             <LabelList
                                 content={({ x, y, width, height, value, index }) => {
                                     const item = chartData[index as number];
@@ -171,7 +157,7 @@ export default function SummaryInvitations({ drawData, currYear }: SummaryInvita
                                             x={Number(x) + Number(width) + 8}
                                             y={Number(y) + Number(height) / 2}
                                             dominantBaseline="middle"
-                                            fontSize={12}
+                                            fontSize={11}
                                             fill="#6b7280"
                                         >
                                             {Number(value).toLocaleString()} [{item?.prevInvitations}]

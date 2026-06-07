@@ -8,6 +8,7 @@ import { InvitationData } from "../../type/Type";
 type DrawTableProps = {
     drawData: InvitationData[];
 };
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function extractYear(dateString?: string): string {
@@ -24,8 +25,8 @@ function getRowBorderClass(draw: InvitationData, next: InvitationData | undefine
 
 function TableHeader() {
     return (
-        <thead className="bg-gray-100">
-            <tr>
+        <thead>
+            <tr className="bg-gray-50 border-b border-gray-100">
                 {HEADERS.map((heading) => (
                     <th key={heading} className={cx.header}>
                         {heading}
@@ -39,26 +40,27 @@ function TableHeader() {
 type DrawRowProps = {
     draw: InvitationData;
     next: InvitationData | undefined;
+    index: number;
 };
 
-function DrawRow({ draw, next }: DrawRowProps) {
+function DrawRow({ draw, next, index }: DrawRowProps) {
     const borderClass = getRowBorderClass(draw, next);
 
     return (
         <tr
-            key={draw.drawNumber}
-            className={`hover:bg-gray-100 ${borderClass}`}
+            className={`transition-colors hover:bg-blue-50/40 ${index % 2 === 0 ? "bg-white" : "bg-gray-50/50"
+                } ${borderClass}`}
         >
             <td className={cx.cell}>{draw.drawNumber}</td>
             <td className={cx.cell}>{draw.drawDateFull}</td>
             <td
-                className={`${cx.cell} border-l-30`}
-                style={{ borderLeftColor: getColorFromName(draw.drawName) }}
+                className={`${cx.cell} border-r-8`}
+                style={{ borderRightColor: getColorFromName(draw.drawName) }}
             >
                 {draw.drawName}
             </td>
-            <td className={cx.cell}>{draw.drawSize.toLocaleString()}</td>
-            <td className={cx.cell}>{draw.drawCRS}</td>
+            <td className={`${cx.cell} tabular-nums`}>{draw.drawSize.toLocaleString()}</td>
+            <td className={`${cx.cell} tabular-nums`}>{draw.drawCRS}</td>
             <td className={cx.cell}>{draw.drawCutOff}</td>
         </tr>
     );
@@ -68,24 +70,41 @@ function DrawRow({ draw, next }: DrawRowProps) {
 
 export default function DrawTable({ drawData }: DrawTableProps) {
     return (
-        <table className="min-w-full divide-y divide-gray-200">
-            <TableHeader />
-            <tbody className="bg-white divide-y divide-gray-100 text-gray-900">
-                {drawData.map((draw, index) => (
-                    <DrawRow
-                        key={draw.drawNumber}
-                        draw={draw}
-                        next={drawData[index + 1]}
-                    />
-                ))}
-            </tbody>
-        </table>
+        <div className="bg-white border-gray-100">
+            {/* Card header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                <div>
+                    <h1 className="text-base font-semibold text-gray-900">Draw History</h1>
+                    <p className="text-xs text-gray-400 mt-0.5">All Express Entry rounds</p>
+                </div>
+                <span className="text-xs bg-blue-50 text-blue-600 font-medium px-2.5 py-1 rounded-full">
+                    {drawData.length} draws
+                </span>
+            </div>
+
+            {/* Table */}
+            <div className="overflow-x-auto">
+                <table className="min-w-full border-collapse">
+                    <TableHeader />
+                    <tbody className="divide-y divide-gray-50 text-gray-800">
+                        {drawData.map((draw, index) => (
+                            <DrawRow
+                                key={draw.drawNumber}
+                                draw={draw}
+                                next={drawData[index + 1]}
+                                index={index}
+                            />
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     );
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const cx = {
-    header: "px-6 py-3 text-center text-sm font-bold text-gray-500 tracking-wider",
-    cell: "px-6 py-4 whitespace-nowrap border border-gray-200",
+    header: "px-5 py-2.5 text-center text-xs font-semibold text-gray-500 uppercase tracking-wide",
+    cell: "px-5 py-2.5 text-xs whitespace-nowrap",
 } as const;

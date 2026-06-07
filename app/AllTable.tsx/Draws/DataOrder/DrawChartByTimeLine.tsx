@@ -60,7 +60,7 @@ export default function DrawChartByTimeline({ drawData }: DrawChartByTimelinePro
 
     return (
         <>
-
+            {/* todo: refactor */}
             <div className="w-280 pl-16 p-4 pb-8 bg-gray-50 rounded-xl shadow-lg mx-24 mb-12">
                 <FilterBox
                     options={drawOptions}
@@ -83,6 +83,7 @@ export default function DrawChartByTimeline({ drawData }: DrawChartByTimelinePro
                         {/* pagination control */}
                         <PaginationControl page={page} setPage={setPage} data={filterData} totalPages={totalPages} />
 
+                        {/* todo: refactor */}
                         {/* Chart */}
                         <div className="overflow-x-auto w-full h-300">
                             <div style={{

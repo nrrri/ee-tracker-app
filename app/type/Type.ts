@@ -118,3 +118,8 @@ export type NewCandidateSummary = {
   newCandidate: number;
   newCandidateOver500: number;
 };
+
+export type PivotRow = {
+  month: string;
+  [year: string]: string | number;
+};
