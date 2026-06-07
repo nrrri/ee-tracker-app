@@ -70,17 +70,7 @@ function DrawRow({ draw, next, index }: DrawRowProps) {
 
 export default function DrawTable({ drawData }: DrawTableProps) {
     return (
-        <div className="bg-white border-gray-100">
-            {/* Card header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-                <div>
-                    <h1 className="text-base font-semibold text-gray-900">Draw History</h1>
-                    <p className="text-xs text-gray-400 mt-0.5">All Express Entry rounds</p>
-                </div>
-                <span className="text-xs bg-blue-50 text-blue-600 font-medium px-2.5 py-1 rounded-full">
-                    {drawData.length} draws
-                </span>
-            </div>
+        <div className="bg-white border-gray-100">           
 
             {/* Table */}
             <div className="overflow-x-auto">
