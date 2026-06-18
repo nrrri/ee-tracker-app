@@ -10,7 +10,7 @@ export default function AnalysisCard({ drawData }: AnalysisCardType) {
     const latest = drawData[0];
 
     const rows = [
-        { label: "Draw #", value: latest?.drawNumber },
+        // { label: "Draw #", value: latest?.drawNumber },
         { label: "Date", value: latest?.drawDateFull },
         { label: "CRS Cut-off", value: latest?.drawCRS },
         { label: "Invitations", value: latest?.drawSize?.toLocaleString() },
@@ -46,7 +46,6 @@ export default function AnalysisCard({ drawData }: AnalysisCardType) {
                 </p>
             </div>
 
-            {/* Table — matches inner table style */}
             <div className="overflow-x-auto rounded-xl border border-gray-100 shadow-sm">
                 <table className="w-full text-sm border-collapse">
                     <tbody className="divide-y divide-gray-50">

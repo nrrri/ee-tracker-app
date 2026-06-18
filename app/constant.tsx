@@ -80,6 +80,22 @@ export const keywordDrawType = [
   { key: "military", label: "Skilled military recruits" },
 ]
 
+export const categoriesName = {
+  'cec': 'Canadian Experience Class',
+  'provincial': "Provincial Nominee Program",
+  'french': "French",
+  'healthcare': "Healthcare and Social Services Occupations",
+  'stem':'STEM',
+  'trade': "Trade Occupations",
+  "education": "Education occupations",
+  "transport": "Education occupations",
+  "physicians": "Transport occupations",
+  "senior": "Senior Managers",
+  "researchers": "Researchers",
+  "military": "Skilled military recruits"
+}
+
+
 export const keywordPoolType = [
   { key: "range0_300", label: "0 - 300" },
   { key: "range301_350", label: "301 - 350" },

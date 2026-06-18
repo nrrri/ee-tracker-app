@@ -113,13 +113,40 @@ export type DrawSummary = {
   cecDrawSize: number;
 };
 
+// for summary by month analysis
+
+export type BaseDraw = {
+  drawDistributionAsOn: string;
+};
+
 export type NewCandidateSummary = {
   drawDistributionAsOn: string;
   newCandidate: number;
   newCandidateOver500: number;
 };
 
+export type MultiCell = {
+  candidateOver500: number;
+  cecDraws: number;
+};
+
+type SingleCell = number;
+
+type YearCell = MultiCell | SingleCell;
+
 export type PivotRow = {
   month: string;
-  [year: string]: string | number;
+  [year: string]: string | YearCell;
+};
+
+// ---- Row shape for the merged table: one number per metric per year ----
+export type MergedRow = {
+    month: string;
+    // values keyed as `${year}__${metricKey}`
+    [cell: string]: string | number;
+};
+
+export type MetricConfig = {
+    key: string;     // e.g. "over500" | "drawSize"
+    label: string;   // e.g. "501-600" | "Draw Size"
 };

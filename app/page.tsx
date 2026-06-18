@@ -8,6 +8,7 @@ import { DrawData, DrawSummary, InvitationData, NewCandidateSummary, PoolData } 
 import AnalysisCard from "./Analysis/AnalysisCard";
 import SummaryInvitations from "./Analysis/SummaryInvitations";
 import SumNewCandidates from "./Analysis/SumNewCandidates";
+import { categoriesName } from "./constant";
 
 export default function Home() {
   const [draws, setDraws] = useState<boolean>(true);
@@ -15,6 +16,8 @@ export default function Home() {
   const [poolData, setPoolData] = useState<PoolData[]>([])
   const currYear = new Date().getFullYear();
   const hasFetched = useRef(false);
+  const getCECDraws = drawData.filter((i) => i.drawName === categoriesName.cec)
+
 
   // ! Calculate New Candidate ----------------------------------
   const newCandidateSummary = (
@@ -128,7 +131,7 @@ export default function Home() {
           <AnalysisCard drawData={drawData} />
           <SummaryInvitations drawData={drawData} currYear={currYear} />
           <div className="overflow-y-auto border rounded-2xl shadow">
-            <SumNewCandidates newCandidateSummary={newCandidateSummary(poolData, summaryData)} />
+            <SumNewCandidates newCandidateSummary={newCandidateSummary(poolData, summaryData)} getCECDraws={getCECDraws} />
           </div>
           {/* todo: add AI summary trend each new draw */}
         </div>
