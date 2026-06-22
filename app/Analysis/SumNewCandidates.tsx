@@ -306,7 +306,7 @@ export default function SumNewCandidates({ newCandidateSummary, getCECDraws }: S
                     data={mergedRows}
                     years={mergedYears}
                     metrics={mergedMetrics}
-                    label="New Candidates 501-600 & Total CEC draws By momth"
+                    label="New Candidates 501-600 & Total CEC draws By month"
                 />
             </div>
         </div>
