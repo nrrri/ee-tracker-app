@@ -85,11 +85,11 @@ export const categoriesName = {
   'provincial': "Provincial Nominee Program",
   'french': "French",
   'healthcare': "Healthcare and Social Services Occupations",
-  'stem':'STEM',
+  'stem': 'STEM',
   'trade': "Trade Occupations",
   "education": "Education occupations",
-  "transport": "Education occupations",
-  "physicians": "Transport occupations",
+  "transport": "Transport occupations",
+  "physicians": "Physicians",
   "senior": "Senior Managers",
   "researchers": "Researchers",
   "military": "Skilled military recruits"
@@ -120,7 +120,7 @@ export const keywordPoolTypeTable = [
   { key: "newTotal", label: "New Candidates" },
 ] as const;
 
-export const allCategorise = ["Canadian Experience Class", "Provincial Nominee Program", "French-Language", "Healthcare and Social Services Occupations", "STEM", "Trade Occupations", "Education occupations", "Transport occupations", "Physicians", "Senior Managers",]
+export const allCategorise = ["Canadian Experience Class", "Provincial Nominee Program", "French-Language", "Healthcare and Social Services Occupations", "STEM", "Trade Occupations", "Education occupations", "Transport occupations", "Physicians", "Senior Managers", "Military"]
 
 export const convertStrToNumber = (str: string) => {
   return Number(str.replace(/,/g, ""))
