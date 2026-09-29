@@ -127,9 +127,11 @@ export default function Home() {
         </div>
 
         {/* Summary Cards */}
-        <div className="flex flex-col md:flex-row justify-center items-stretch gap-4 px-4 mb-8 h-[550]">
+        <div className="flex flex-col md:flex-row justify-center items-stretch gap-4 px-4 mb-8 md:h-[550px]">
           <AnalysisCard drawData={drawData} />
-          <SummaryInvitations drawData={drawData} currYear={currYear} />
+          <div className="overflow-y-auto rounded-2xl">
+            <SummaryInvitations drawData={drawData} currYear={currYear} />
+          </div>
           <div className="overflow-y-auto border rounded-2xl shadow">
             <SumNewCandidates newCandidateSummary={newCandidateSummary(poolData, summaryData)} getCECDraws={getCECDraws} />
           </div>

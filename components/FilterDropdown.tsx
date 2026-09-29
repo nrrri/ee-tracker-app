@@ -54,7 +54,7 @@ export function FilterDropdownTimeline({
         setAddFilterType(e.target.value);
     };
 
-    const options = ["Timeline", "Year-over-Year Comparison (2024-latest)"]
+    const options = ["Timeline", "Year-over-Year Comparison"]
 
     return (
         <div className="flex items-center gap-3">

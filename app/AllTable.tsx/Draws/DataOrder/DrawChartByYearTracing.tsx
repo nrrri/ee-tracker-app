@@ -1,13 +1,14 @@
 "use client";
 
-import { PaginationControl } from "@/components/PaginationControl";
 import { ChartContainer } from "@/components/ui/chart";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Bar, CartesianGrid, Cell, ComposedChart, LabelList, Legend, Line, Tooltip, XAxis, YAxis } from "recharts";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { CustomTooltipAnalysis } from "@/components/CustomTooltip";
 import FilterDropdown from "@/components/FilterDropdown";
 import { DataOption, InvitationData, PoolData } from "@/app/type/Type";
-import { chartConfig, fadeHex, getColorFromName, maxBalance, minBalance, PAGE_SIZE } from "@/app/constant";
+import { chartConfig, fadeHex, getColorFromName, maxBalance, minBalance } from "@/app/constant";
+import { useIsMobile } from "@/components/hooks/useIsMobile";
 
 type DrawChartByYearTracingProp = {
     drawData: InvitationData[]
@@ -15,225 +16,186 @@ type DrawChartByYearTracingProp = {
     drawOptions: DataOption[]
 }
 
+// number of most recent years available to compare
+const MAX_COMPARE_YEARS = 3;
+
+const getYear = (item: InvitationData) => new Date(item.drawDateFull).getFullYear();
+
+const monthDay = (date: string) => {
+    const d = new Date(date);
+    return d.getMonth() * 100 + d.getDate();
+};
+
 export default function DrawChartByYearTracing({ drawData, poolData, drawOptions }: DrawChartByYearTracingProp) {
     const [addFilterType, setAddFilterType] = useState<string[]>(['Canadian Experience Class']);
-    // const [selectedYears, setSelectedYears] = useState<string[]>([]);
-    const [filterData, setFilterData] = useState<InvitationData[]>([])
-    const [page, setPage] = useState(1);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const filteredDraws: InvitationData[] = Object(drawData).filter((item: any) => new Date(item.drawDateFull).getFullYear() > 2023)
+    // hide per-point CRS labels on narrow screens where they would overlap (tooltip still shows them)
+    const isNarrow = useIsMobile(1024);
 
-    const totalPages = filterData.length > 0 ? Math.ceil(filterData.length / PAGE_SIZE) : Math.ceil(filteredDraws.length / PAGE_SIZE)
+    // latest years across all draws, newest first
+    const yearOptions = useMemo(() =>
+        [...new Set(drawData.map(getYear))].sort((a, b) => b - a).slice(0, MAX_COMPARE_YEARS),
+        [drawData]
+    );
+    const [selectedYears, setSelectedYears] = useState<number[]>(yearOptions);
 
-    // derive year options from drawDate (not drawDistributionAsOn)
-    // const yearOptions: DataOption[] = Array.from(
-    //     new Set(drawData.map(d => new Date(d.drawDate).getFullYear()))
-    // )
-    //     .sort((a, b) => b - a)
-    //     .map(year => ({
-    //         key: String(year),
-    //         label: String(year),
-    //     }));
-
-    const filterByCategory = (data: InvitationData[]) => {
-        return data.filter(item =>
+    const categoryDraws = useMemo(() =>
+        drawData.filter(item =>
             addFilterType.some(k => item.drawName.toLocaleLowerCase().includes(k.toLocaleLowerCase()))
+        ),
+        [drawData, addFilterType]
+    );
+
+    // years to plot, newest first
+    const years = yearOptions.filter(year => selectedYears.includes(year));
+
+    // newest year uses the category color, older years get progressively lighter teal
+    const lineColors: Record<number, string> = {};
+    const barColors: Record<number, string> = {};
+    years.forEach((year, index) => {
+        if (index === 0) {
+            lineColors[year] = getColorFromName(addFilterType[0]);
+            barColors[year] = fadeHex(getColorFromName(addFilterType[0]), 0.8);
+        } else {
+            lineColors[year] = fadeHex("#004242", Math.min(0.4 + 0.2 * (index - 1), 0.85));
+            barColors[year] = fadeHex("#004242", Math.min(0.8 + 0.1 * (index - 1), 0.95));
+        }
+    });
+
+    // transform data: every draw of the selected years, ordered by month/day so years overlay
+    const chartData = categoryDraws
+        .filter(item => years.includes(getYear(item)))
+        .sort((a, b) => monthDay(a.drawDateFull) - monthDay(b.drawDateFull))
+        .map((item) => {
+            const year = getYear(item);
+            const filterCandidates = poolData.find((pool) =>
+            (pool.drawDistributionAsOn === item.drawDistributionAsOn && item.drawName === 'Canadian Experience Class'
+            ))
+
+            return {
+                label: item.drawDateFull,
+                year,
+                drawSize: item.drawSize,
+                [`year_${year}`]: item.drawCRS,
+                drawCRS: item.drawCRS,
+                candidatesIn500: filterCandidates?.range501_600,
+                dateInPool: item.drawDistributionAsOn,
+                dateCutOff: item.drawCutOff,
+            };
+        });
+
+    const toggleYear = (year: number) => {
+        setSelectedYears(prev =>
+            prev.includes(year) ? prev.filter(y => y !== year) : [...prev, year]
         );
     };
 
-    // const filterByYear = (data: InvitationData[]) => {
-    //     return selectedYears.length === 0
-    //         ? data
-    //         : data.filter(d =>
-    //             selectedYears.includes(String(new Date(d.drawDate).getFullYear()))
-    //         );
-    // };
-
-    useEffect(() => {
-        setFilterData(filteredDraws.filter((d) => d.drawName === 'Canadian Experience Class'));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-
-    // re-run whenever category or year filter changes
-    useEffect(() => {
-        let result = filteredDraws;
-
-        // if (selectedYears.length > 0) result = filterByYear(result);
-        result = filterByCategory(result)
-        setFilterData(result);
-        setPage(1);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [addFilterType]);
-
-    // transform data
-    const chartData = filterData.map((item) => {
-        const d = new Date(item.drawDateFull);
-
-        const year = d.getFullYear();
-        const filterCandidates = poolData.find((pool) =>
-        (pool.drawDistributionAsOn === item.drawDistributionAsOn && item.drawName === 'Canadian Experience Class'
-        ))
-
-        return {
-            label: item.drawDateFull,
-            drawSize: item.drawSize,
-            [`year_${year}`]: item.drawCRS,
-            drawCRS: item.drawCRS,
-            candidatesIn500: filterCandidates?.range501_600,
-            dateInPool: item.drawDistributionAsOn,
-            dateCutOff: item.drawCutOff,
-        };
-    });
-
-    filteredDraws.sort((a, b) => {
-        const da = new Date(a.drawDateFull);
-        const db = new Date(b.drawDateFull);
-
-        const aMonthDay =
-            da.getMonth() * 100 + da.getDate();
-
-        const bMonthDay =
-            db.getMonth() * 100 + db.getDate();
-
-        return aMonthDay - bMonthDay;
-    });
-
-    // unique years
-    const years = [
-        ...new Set(
-            filteredDraws.map((item) =>
-                new Date(item.drawDateFull).getFullYear()
-            )
-        ),
-    ];
-
-    const lineColors: Record<number, string> = {
-        2024: fadeHex("#004242", 0.6),
-        2025: fadeHex("#004242", 0.4),
-        2026: getColorFromName(addFilterType[0]),
-    };
-
-    const getYearColor = (date: string) => {
-        const year = new Date(date).getFullYear();
-
-        switch (year) {
-            case 2024:
-                return fadeHex("#004242", 0.9);
-
-            case 2025:
-                return fadeHex("#004242", 0.8);
-
-            case 2026:
-                return fadeHex(getColorFromName(addFilterType[0]), 0.8);
-        }
-    };
-
-    const formattedData = chartData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
     return (
-        <div className="overflow-x-auto w-full h-300">
-            <div className="flex justify-center">
-                <div className="w-180 pl-16 p-4 bg-gray-50 rounded-xl shadow-lg mx-24 mb-12">
-                    {/* <div className="border-b pb-4"> */}
+        <div className="w-full">
+            <div className="flex justify-center px-4">
+                <div className="w-full max-w-180 p-4 md:pl-16 bg-gray-50 rounded-xl shadow-lg mb-8 md:mb-12 flex flex-col gap-4">
                     <FilterDropdown
                         options={drawOptions}
                         addFilterType={addFilterType}
                         setAddFilterType={setAddFilterType}
                         pool={false}
                     />
-                    {/* </div> */}
-                    {/* <FilterBox
-                    options={yearOptions}
-                    addFilterType={selectedYears}
-                    setAddFilterType={setSelectedYears}
-                    setPage={setPage}
-                    label="Filter by year"
-                /> */}
-                </div>
-            </div>
-            {/* your chart component */}
-            {formattedData.length > 0 ? (
-                <>
-                    {/* pagination control */}
-                    <div className="flex justify-center">
-                        <PaginationControl page={page} setPage={setPage} data={filterData} totalPages={totalPages} />
-                    </div>
-                    <div className="overflow-x-auto w-full">
-                        <div style={{
-                            width: "100%",
-                            minHeight: "400px",
-                        }}>
-                            <ChartContainer config={chartConfig}>
-                                <ComposedChart data={formattedData}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-
-                                    <XAxis
-                                        dataKey="label"
-                                        tickLine={false}
-                                        tickMargin={60}
-                                        axisLine={false}
-                                        tickFormatter={(value) => value}
-                                        angle={-90}
-                                        height={150}
-                                        width={20}
-                                    />
-
-                                    <YAxis yAxisId="left" domain={[minBalance(formattedData), maxBalance(formattedData, addFilterType)]} />
-
-                                    <YAxis
-                                        yAxisId="right"
-                                        orientation="right"
-                                    />
-                                    <Tooltip content={<CustomTooltipAnalysis />} />
-
-                                    <Legend />
-
-                                    {/* BAR */}
-                                    <Bar
-                                        barSize={18}
-                                        radius={4}
-                                        yAxisId="right"
-                                        dataKey="drawSize"
-                                        fill="#d1d1d1"
-                                    >
-                                        {formattedData.map((entry, index) => (
-                                            <Cell
-                                                key={`cell-${index}`}
-                                                fill={getYearColor(entry.label)}
-                                            />
-
-                                        ))}
-
-                                    </Bar>
-
-                                    {/* LINES BY YEAR */}
-                                    {years.map((year) => (
-                                        <Line
-                                            key={year}
-                                            yAxisId="left"
-                                            type="linear"
-                                            dataKey={`year_${year}`}
-                                            name={`${year}`}
-                                            stroke={lineColors[year]}
-                                            strokeWidth={3}
-                                            connectNulls={true}
-                                        >
-                                            <LabelList
-                                                dataKey={`year_${year}`}
-                                                position="top"
-                                                offset={10}
-                                                fill="#000"
-                                                fontSize={12}
-                                            />
-                                        </Line>
-                                    ))}
-                                </ComposedChart>
-                            </ChartContainer>
+                    <div className="flex flex-wrap items-center gap-3">
+                        <span className="font-bold text-gray-700 whitespace-nowrap">
+                            Compare years
+                        </span>
+                        <div className="flex flex-wrap gap-x-5 gap-y-2">
+                            {yearOptions.map((year) => {
+                                const id = `compare-year-${year}`;
+                                return (
+                                    <label key={year} htmlFor={id} className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                                        <Checkbox
+                                            id={id}
+                                            checked={selectedYears.includes(year)}
+                                            onCheckedChange={() => toggleYear(year)}
+                                        />
+                                        {year}
+                                    </label>
+                                );
+                            })}
                         </div>
                     </div>
-                </>
+                </div>
+            </div>
+            {chartData.length > 0 ? (
+                <div className="w-full">
+                    <ChartContainer config={chartConfig} className="h-[520px] md:h-200">
+                        <ComposedChart data={chartData}>
+                            <CartesianGrid strokeDasharray="3 3" />
+
+                            <XAxis
+                                dataKey="label"
+                                tickLine={false}
+                                tickMargin={60}
+                                axisLine={false}
+                                tickFormatter={(value) => value}
+                                angle={-90}
+                                height={150}
+                                width={20}
+                                minTickGap={4}
+                            />
+
+                            <YAxis yAxisId="left" domain={[minBalance(chartData), maxBalance(chartData, addFilterType)]} />
+
+                            <YAxis
+                                yAxisId="right"
+                                orientation="right"
+                            />
+                            <Tooltip content={<CustomTooltipAnalysis />} />
+
+                            <Legend />
+
+                            {/* BAR */}
+                            <Bar
+                                maxBarSize={18}
+                                radius={4}
+                                yAxisId="right"
+                                dataKey="drawSize"
+                                fill="#d1d1d1"
+                            >
+                                {chartData.map((entry, index) => (
+                                    <Cell
+                                        key={`cell-${index}`}
+                                        fill={barColors[entry.year]}
+                                    />
+                                ))}
+                            </Bar>
+
+                            {/* LINES BY YEAR */}
+                            {years.map((year) => (
+                                <Line
+                                    key={year}
+                                    yAxisId="left"
+                                    type="linear"
+                                    dataKey={`year_${year}`}
+                                    name={`${year}`}
+                                    stroke={lineColors[year]}
+                                    strokeWidth={3}
+                                    connectNulls={true}
+                                >
+                                    {!isNarrow && (
+                                        <LabelList
+                                            dataKey={`year_${year}`}
+                                            position="top"
+                                            offset={10}
+                                            fill="#000"
+                                            fontSize={12}
+                                        />
+                                    )}
+                                </Line>
+                            ))}
+                        </ComposedChart>
+                    </ChartContainer>
+                </div>
             ) : (
                 <div>
-                    No draws are currently available for this category. Please select another category to view the analysis.
+                    {years.length === 0
+                        ? "Select at least one year to compare."
+                        : "No draws are currently available for this category. Please select another category to view the analysis."}
                 </div>
             )}
         </div>
