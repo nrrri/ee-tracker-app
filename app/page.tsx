@@ -9,6 +9,7 @@ import AnalysisCard from "./Analysis/AnalysisCard";
 import SummaryInvitations from "./Analysis/SummaryInvitations";
 import SumNewCandidates from "./Analysis/SumNewCandidates";
 import { categoriesName } from "./constant";
+import ScrollToTopButton from "@/components/ScrollToTopButton";
 
 export default function Home() {
   const [draws, setDraws] = useState<boolean>(true);
@@ -16,6 +17,7 @@ export default function Home() {
   const [poolData, setPoolData] = useState<PoolData[]>([])
   const currYear = new Date().getFullYear();
   const hasFetched = useRef(false);
+  const tableSectionRef = useRef<HTMLDivElement>(null);
   const getCECDraws = drawData.filter((i) => i.drawName === categoriesName.cec)
 
 
@@ -140,7 +142,7 @@ export default function Home() {
 
         {/* Navigation */}
         {/* todo: move menu to isolate component */}
-        <div className="flex flex-col sm:flex-row justify-end gap-2 px-4 md:px-8 mb-4">
+        <div ref={tableSectionRef} className="flex flex-col sm:flex-row justify-end gap-2 px-4 md:px-8 mb-4 scroll-mt-4">
           <ButtonGroup className="w-full sm:w-auto justify-end">
             <Button
               variant="outline"
@@ -171,6 +173,8 @@ export default function Home() {
             newCandidateSummary={newCandidateSummary(poolData, summaryData)}
           />
         </div>
+
+        <ScrollToTopButton targetRef={tableSectionRef} />
       </main>
     </div>
   );
