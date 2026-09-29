@@ -193,6 +193,9 @@ export const fadeHex = (
 
 export const PAGE_SIZE = 30;
 
+// viewer's CRS (line on the year-over-year chart, accent in the Latest Round card)
+export const USER_CRS_COLOR = "#FDDA0D";
+
 export const minBalance = (data: Partial<InvitationData>[], fullChart: boolean = true) => {
   if (!fullChart) return 0
 

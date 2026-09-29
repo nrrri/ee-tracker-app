@@ -1,6 +1,7 @@
 "use client";
 
 import { InvitationData } from "../type/Type";
+import { CrsCardSummary } from "@/components/CrsCalculator";
 
 type AnalysisCardType = {
     drawData: InvitationData[];
@@ -66,6 +67,8 @@ export default function AnalysisCard({ drawData }: AnalysisCardType) {
                     </tbody>
                 </table>
             </div>
+
+            <CrsCardSummary cutOff={Number(latest.drawCRS)} />
         </div>
     );
 }

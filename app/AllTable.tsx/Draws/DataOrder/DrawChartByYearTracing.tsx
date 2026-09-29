@@ -7,8 +7,10 @@ import { useMemo, useState } from "react";
 import { CustomTooltipAnalysis } from "@/components/CustomTooltip";
 import FilterDropdown from "@/components/FilterDropdown";
 import { DataOption, InvitationData, PoolData } from "@/app/type/Type";
-import { chartConfig, fadeHex, getColorFromName, matchesCategory, maxBalance, minBalance } from "@/app/constant";
+import { chartConfig, fadeHex, getColorFromName, matchesCategory, maxBalance, minBalance, USER_CRS_COLOR } from "@/app/constant";
 import { useIsMobile } from "@/components/hooks/useIsMobile";
+import { useCrs } from "@/components/CrsCalculator";
+import { calculateCrs } from "@/lib/crs";
 
 type DrawChartByYearTracingProp = {
     drawData: InvitationData[]
@@ -37,6 +39,10 @@ export default function DrawChartByYearTracing({ drawData, poolData, drawOptions
         [drawData]
     );
     const [selectedYears, setSelectedYears] = useState<number[]>(yearOptions);
+    const { profile: crsProfile, score: crsToday, openEditor } = useCrs();
+    const [showUserCrs, setShowUserCrs] = useState(true);
+    // the viewer's score is projected across the latest year with draws
+    const latestYear = yearOptions[0] ?? new Date().getFullYear();
 
     const categoryDraws = useMemo(() =>
         drawData.filter(item =>
@@ -67,6 +73,9 @@ export default function DrawChartByYearTracing({ drawData, poolData, drawOptions
         .sort((a, b) => monthDay(a.drawDateFull) - monthDay(b.drawDateFull))
         .map((item) => {
             const year = getYear(item);
+            // same month/day in the latest year, so age and work experience reflect that date
+            const drawDate = new Date(item.drawDateFull);
+            const projectedDate = new Date(latestYear, drawDate.getMonth(), drawDate.getDate());
             const filterCandidates = poolData.find((pool) =>
             (pool.drawDistributionAsOn === item.drawDistributionAsOn && item.drawName === 'Canadian Experience Class'
             ))
@@ -80,8 +89,17 @@ export default function DrawChartByYearTracing({ drawData, poolData, drawOptions
                 candidatesIn500: filterCandidates?.range501_600,
                 dateInPool: item.drawDistributionAsOn,
                 dateCutOff: item.drawCutOff,
+                userCRS: showUserCrs ? calculateCrs(crsProfile, projectedDate)?.total : undefined,
+                userCRSDate: projectedDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
             };
         });
+
+    // keep the viewer's score line inside the left axis
+    const userScores = chartData.map(d => d.userCRS).filter((s): s is number => s !== undefined);
+    const leftDomain = [
+        Math.min(minBalance(chartData), ...userScores.map(s => Math.floor((s - 10) / 10) * 10)),
+        Math.max(maxBalance(chartData, addFilterType), ...userScores.map(s => Math.ceil((s + 10) / 10) * 10)),
+    ];
 
     const toggleYear = (year: number) => {
         setSelectedYears(prev =>
@@ -115,6 +133,36 @@ export default function DrawChartByYearTracing({ drawData, poolData, drawOptions
                             ))}
                         </div>
                     </div>
+                    <div className="flex flex-wrap items-center gap-3">
+                        <span className="font-bold text-gray-700 whitespace-nowrap">
+                            Your CRS
+                        </span>
+                        {crsToday ? (
+                            <>
+                                <FilterChip
+                                    label={`${crsToday.total} · show on chart`}
+                                    selected={showUserCrs}
+                                    onToggle={() => setShowUserCrs(s => !s)}
+                                    color={USER_CRS_COLOR}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={openEditor}
+                                    className="text-xs text-gray-500 hover:text-gray-800 hover:underline underline-offset-2"
+                                >
+                                    Edit
+                                </button>
+                            </>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={openEditor}
+                                className="rounded-full border border-dashed border-gray-300 px-3 py-1.5 text-sm text-gray-600 hover:border-gray-400 hover:bg-white transition-colors"
+                            >
+                                + Add your CRS to the chart
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
             {chartData.length > 0 ? (
@@ -135,7 +183,7 @@ export default function DrawChartByYearTracing({ drawData, poolData, drawOptions
                                 minTickGap={4}
                             />
 
-                            <YAxis yAxisId="left" domain={[minBalance(chartData), maxBalance(chartData, addFilterType)]} />
+                            <YAxis yAxisId="left" domain={leftDomain} />
 
                             <YAxis
                                 yAxisId="right"
@@ -184,6 +232,55 @@ export default function DrawChartByYearTracing({ drawData, poolData, drawOptions
                                     )}
                                 </Line>
                             ))}
+
+                            {/* VIEWER'S CRS, stepping on birthdays / work anniversaries */}
+                            {userScores.length > 0 && (
+                                <Line
+                                    yAxisId="left"
+                                    type="stepAfter"
+                                    dataKey="userCRS"
+                                    name={`Your CRS (${latestYear})`}
+                                    stroke={USER_CRS_COLOR}
+                                    strokeWidth={2.5}
+                                    strokeDasharray="6 4"
+                                    dot={false}
+                                    activeDot={{ r: 4, fill: USER_CRS_COLOR }}
+                                >
+                                    {/* label only the first point and each step, not every draw */}
+                                    <LabelList
+                                        dataKey="userCRS"
+                                        content={({ x, y, value, index }) => {
+                                            const i = Number(index);
+                                            if (value === undefined || (i > 0 && chartData[i - 1]?.userCRS === value)) return null;
+                                            const text = String(value);
+                                            const width = text.length * 8 + 12;
+                                            return (
+                                                <g>
+                                                    <rect
+                                                        x={Number(x) - width / 2}
+                                                        y={Number(y) - 26}
+                                                        width={width}
+                                                        height={18}
+                                                        rx={9}
+                                                        fill={USER_CRS_COLOR}
+                                                    />
+                                                    <text
+                                                        x={Number(x)}
+                                                        y={Number(y) - 17}
+                                                        textAnchor="middle"
+                                                        dominantBaseline="central"
+                                                        fontSize={12}
+                                                        fontWeight={600}
+                                                        fill="#111827"
+                                                    >
+                                                        {text}
+                                                    </text>
+                                                </g>
+                                            );
+                                        }}
+                                    />
+                                </Line>
+                            )}
                         </ComposedChart>
                     </ChartContainer>
                 </div>

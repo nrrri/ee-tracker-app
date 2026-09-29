@@ -10,6 +10,7 @@ import SummaryInvitations from "./Analysis/SummaryInvitations";
 import SumNewCandidates from "./Analysis/SumNewCandidates";
 import { categoriesName } from "./constant";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
+import { CrsProvider } from "@/components/CrsCalculator";
 
 export default function Home() {
   const [draws, setDraws] = useState<boolean>(true);
@@ -121,7 +122,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div>
+    <CrsProvider projectionYear={currYear}>
       <main>
         {/* Header */}
         <div className="mx-4 mt-4 mb-6 text-2xl md:text-3xl font-semibold">
@@ -176,6 +177,6 @@ export default function Home() {
 
         <ScrollToTopButton targetRef={tableSectionRef} />
       </main>
-    </div>
+    </CrsProvider>
   );
 }
