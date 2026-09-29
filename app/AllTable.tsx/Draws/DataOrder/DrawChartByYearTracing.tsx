@@ -7,7 +7,7 @@ import { useMemo, useState } from "react";
 import { CustomTooltipAnalysis } from "@/components/CustomTooltip";
 import FilterDropdown from "@/components/FilterDropdown";
 import { DataOption, InvitationData, PoolData } from "@/app/type/Type";
-import { chartConfig, fadeHex, getColorFromName, maxBalance, minBalance } from "@/app/constant";
+import { chartConfig, fadeHex, getColorFromName, matchesCategory, maxBalance, minBalance } from "@/app/constant";
 import { useIsMobile } from "@/components/hooks/useIsMobile";
 
 type DrawChartByYearTracingProp = {
@@ -40,7 +40,7 @@ export default function DrawChartByYearTracing({ drawData, poolData, drawOptions
 
     const categoryDraws = useMemo(() =>
         drawData.filter(item =>
-            addFilterType.some(k => item.drawName.toLocaleLowerCase().includes(k.toLocaleLowerCase()))
+            addFilterType.some(k => matchesCategory(item.drawName, k))
         ),
         [drawData, addFilterType]
     );

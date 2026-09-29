@@ -129,6 +129,20 @@ export const convertStrToNumber = (str: string) => {
 export const parseNumber = (value: string) =>
   Number(value.replace(/,/g, ""));
 
+// IRCC names the same category inconsistently between rounds
+// (e.g. "Trade occupations (Version 1)" vs "Trades Occupations, 2026-Version 3"),
+// so compare names without case, hyphens or trailing plural "s"
+export const normalizeDrawName = (name: string) =>
+  name
+    .toLowerCase()
+    .replace(/-/g, " ")
+    .replace(/s\b/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+export const matchesCategory = (drawName: string, category: string) =>
+  normalizeDrawName(drawName).includes(normalizeDrawName(category));
+
 export function getColorFromName(name: string, pool: boolean = false) {
   const color: Record<string, string> = pool ? poolColors : keywordColors
   const keyword = Object.keys(color).find(k =>

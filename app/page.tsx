@@ -129,7 +129,7 @@ export default function Home() {
         {/* Summary Cards */}
         <div className="flex flex-col md:flex-row justify-center items-stretch gap-4 px-4 mb-8 md:h-[550px]">
           <AnalysisCard drawData={drawData} />
-          <div className="overflow-y-auto rounded-2xl">
+          <div className="overflow-y-auto border rounded-2xl shadow">
             <SummaryInvitations drawData={drawData} currYear={currYear} />
           </div>
           <div className="overflow-y-auto border rounded-2xl shadow">

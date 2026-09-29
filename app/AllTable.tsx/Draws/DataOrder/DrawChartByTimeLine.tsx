@@ -1,4 +1,4 @@
-import { chartConfig, getColorFromName, keywordDrawType, maxBalance, minBalance, PAGE_SIZE } from "@/app/constant";
+import { chartConfig, getColorFromName, keywordDrawType, matchesCategory, maxBalance, minBalance, PAGE_SIZE } from "@/app/constant";
 import { DataOption, InvitationData } from "@/app/type/Type";
 import { CustomTooltip } from "@/components/CustomTooltip";
 import FilterBox from "@/components/FilterBox";
@@ -21,7 +21,7 @@ export default function DrawChartByTimeline({ drawData }: DrawChartByTimelinePro
 
     const filterByCategory = (data: InvitationData[]) => {
         return data.filter(item =>
-            addFilterType.some(k => item.drawName.toLocaleLowerCase().includes(k.toLocaleLowerCase()))
+            addFilterType.some(k => matchesCategory(item.drawName, k))
         );
     };
 

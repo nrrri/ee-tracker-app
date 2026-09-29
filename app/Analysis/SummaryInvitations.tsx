@@ -3,7 +3,7 @@ import {
 } from 'recharts';
 import { InvitationData } from '../type/Type';
 import { CustomTooltipSummary } from '@/components/CustomTooltip';
-import { allCategorise, getColorFromName } from '../constant';
+import { allCategorise, getColorFromName, matchesCategory } from '../constant';
 import { ExternalLink } from 'lucide-react';
 
 type SummaryInvitationsProps = {
@@ -27,18 +27,11 @@ export default function SummaryInvitations({ drawData, currYear }: SummaryInvita
     };
 
     const getCategory = (input: string) => {
-        const lower = input.toLowerCase();
         return (
-            allCategorise.find(cat => {
-                const catLower = cat.toLowerCase();
-                const normalize = (str: string) =>
-                    str.replace(/-/g, ' ')
-                        .replace(/s\b/g, '')
-                        .replace(/\s+/g, ' ')
-                        .trim();
-                return normalize(lower).includes(normalize(catLower)) ||
-                    normalize(catLower).includes(normalize(lower.split('(')[0].trim()));
-            }) || "Other"
+            allCategorise.find(cat =>
+                matchesCategory(input, cat) ||
+                matchesCategory(cat, input.split('(')[0])
+            ) || "Other"
         );
     };
 
@@ -77,14 +70,14 @@ export default function SummaryInvitations({ drawData, currYear }: SummaryInvita
     const chartHeight = chartData.length * 42;
 
     return (
-        <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-5 md:p-6">
+        <div className="w-full bg-white border border-gray-100 p-5 md:p-6">
             {/* Card header — matches AnalysisCard / SumNewCandidates */}
-            <div className="flex items-center justify-between mb-5 pb-4 border-b border-gray-100">
+            <div className="flex items-center justify-between mb-5 pb-4 border-b border-gray-100 sticky top-0 bg-white z-10">
                 <div>
                     <h1 className="text-base font-semibold text-gray-900 text-start">
                         Draw Summary of {currYear}
                     </h1>
-                    <p className="text-xs text-gray-400 mt-0.5">Invitations by category vs prior year</p>
+                    <p className="text-xs text-start text-gray-400 mt-0.5">Invitations by category vs prior year</p>
                 </div>
             </div>
 
@@ -106,13 +99,34 @@ export default function SummaryInvitations({ drawData, currYear }: SummaryInvita
                 </a>
             </div>
 
+            {/* Section label + legend — matches SumNewCandidates table labels */}
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-blue-500" />
+                    <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500">
+                        By Category
+                    </h2>
+                </div>
+                <div className="flex items-center gap-3 text-[11px] text-gray-500">
+                    <span className="flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-sm bg-linear-to-r from-[#FC4024] via-[#F8991D] to-[#00859C]" />
+                        {currYear}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-sm bg-[#dfdfdf]" />
+                        {currYear - 1}
+                    </span>
+                    <span className="text-gray-400">[n] = draws</span>
+                </div>
+            </div>
+
             {/* Chart */}
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto rounded-xl border border-gray-100 shadow-sm py-3 pr-2">
                 <ResponsiveContainer width="100%" height={chartHeight}>
                     <BarChart
                         data={chartData}
                         layout="vertical"
-                        margin={{ top: 0, right: 40, bottom: 0, left: 0 }}
+                        margin={{ top: 0, right: 80, bottom: 0, left: 0 }}
                     >
                         <XAxis type="number" hide={true} />
                         <YAxis
