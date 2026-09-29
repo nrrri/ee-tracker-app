@@ -60,22 +60,24 @@ export default function DrawChartByTimeline({ drawData }: DrawChartByTimelinePro
 
     return (
         <>
-            {/* todo: refactor */}
-            <div className="w-280 pl-16 p-4 pb-8 bg-gray-50 rounded-xl shadow-lg mx-24 mb-12">
-                <FilterBox
-                    options={drawOptions}
-                    addFilterType={addFilterType}
-                    setAddFilterType={setAddFilterType}
-                    setPage={setPage}
-                    label="Filter by Categories"
-                />
-                <FilterBox
-                    options={yearOptions}
-                    addFilterType={selectedYears}
-                    setAddFilterType={setSelectedYears}
-                    setPage={setPage}
-                    label="Filter by year"
-                />
+            <div className="flex justify-center w-full px-4">
+                <div className="w-full max-w-280 p-5 md:px-8 bg-gray-50 rounded-xl shadow-lg mb-12 flex flex-col gap-6">
+                    <FilterBox
+                        options={drawOptions}
+                        addFilterType={addFilterType}
+                        setAddFilterType={setAddFilterType}
+                        setPage={setPage}
+                        label="Filter by Categories"
+                        getColor={(option) => getColorFromName(option.label)}
+                    />
+                    <FilterBox
+                        options={yearOptions}
+                        addFilterType={selectedYears}
+                        setAddFilterType={setSelectedYears}
+                        setPage={setPage}
+                        label="Filter by year"
+                    />
+                </div>
             </div>
             {
                 filterData.length > 0 ?

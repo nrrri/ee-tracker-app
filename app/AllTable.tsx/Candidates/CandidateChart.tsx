@@ -86,8 +86,8 @@ export default function CandidateChart({ poolData, newCandidateSummary }: Candid
 
     return (
         <div className="flex items-center flex-col">
-            <div className="flex justify-center">
-                <div className="w-200 p-8 py-8 bg-gray-50 rounded-xl shadow-lg mx-24 mb-12">
+            <div className="flex justify-center w-full px-4">
+                <div className="w-full max-w-200 p-5 md:p-8 bg-gray-50 rounded-xl shadow-lg mb-12 flex flex-col gap-4">
                     <div className="border-b pb-4">
                         <FilterDropdown
                             options={poolOptions}

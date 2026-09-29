@@ -1,7 +1,7 @@
 "use client";
 
 import { ChartContainer } from "@/components/ui/chart";
-import { Checkbox } from "@/components/ui/checkbox";
+import { FilterChip } from "@/components/FilterBox";
 import { Bar, CartesianGrid, Cell, ComposedChart, LabelList, Legend, Line, Tooltip, XAxis, YAxis } from "recharts";
 import { useMemo, useState } from "react";
 import { CustomTooltipAnalysis } from "@/components/CustomTooltip";
@@ -103,20 +103,16 @@ export default function DrawChartByYearTracing({ drawData, poolData, drawOptions
                         <span className="font-bold text-gray-700 whitespace-nowrap">
                             Compare years
                         </span>
-                        <div className="flex flex-wrap gap-x-5 gap-y-2">
-                            {yearOptions.map((year) => {
-                                const id = `compare-year-${year}`;
-                                return (
-                                    <label key={year} htmlFor={id} className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                                        <Checkbox
-                                            id={id}
-                                            checked={selectedYears.includes(year)}
-                                            onCheckedChange={() => toggleYear(year)}
-                                        />
-                                        {year}
-                                    </label>
-                                );
-                            })}
+                        <div className="flex flex-wrap gap-2">
+                            {yearOptions.map((year) => (
+                                <FilterChip
+                                    key={year}
+                                    label={String(year)}
+                                    selected={selectedYears.includes(year)}
+                                    onToggle={() => toggleYear(year)}
+                                    color={lineColors[year]}
+                                />
+                            ))}
                         </div>
                     </div>
                 </div>

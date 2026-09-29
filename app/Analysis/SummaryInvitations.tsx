@@ -120,24 +120,28 @@ export default function SummaryInvitations({ drawData, currYear }: SummaryInvita
                 </div>
             </div>
 
-            {/* Chart */}
-            <div className="overflow-x-auto rounded-xl border border-gray-100 shadow-sm py-3 pr-2">
+            {/* Chart — no overflow wrapper, it would clip the tooltip */}
+            <div>
                 <ResponsiveContainer width="100%" height={chartHeight}>
                     <BarChart
                         data={chartData}
                         layout="vertical"
-                        margin={{ top: 0, right: 80, bottom: 0, left: 0 }}
+                        margin={{ top: 0, right: 72, bottom: 0, left: 0 }}
                     >
                         <XAxis type="number" hide={true} />
                         <YAxis
                             type="category"
                             dataKey="name"
-                            tick={{ fontSize: 12, fill: '#6b7280' }}
+                            tick={{ fontSize: 11, fill: '#6b7280' }}
                             axisLine={false}
                             tickLine={false}
-                            width={155}
+                            width={140}
                         />
-                        <Tooltip content={<CustomTooltipSummary />} />
+                        <Tooltip
+                            content={<CustomTooltipSummary currYear={currYear} />}
+                            cursor={{ fill: '#f3f4f6' }}
+                            wrapperStyle={{ zIndex: 5, outline: 'none' }}
+                        />
                         <Bar dataKey="currentYear" radius={[0, 3, 3, 0]} maxBarSize={28}>
                             {chartData.map((drawName, index) => (
                                 <Cell key={index} fill={getColorFromName(drawName.name)} />

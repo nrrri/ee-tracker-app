@@ -77,7 +77,7 @@ export const keywordDrawType = [
   { key: "physicians", label: "Physicians" },
   { key: "senior", label: "Senior Managers" },
   { key: "researchers", label: "Researchers" },
-  { key: "military", label: "Skilled military recruits" },
+  { key: "military", label: "Skilled Military Recruits" },
 ]
 
 export const categoriesName = {

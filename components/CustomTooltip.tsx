@@ -23,7 +23,7 @@ export function CustomTooltip({ active, payload }: TooltipProps) {
     )
 }
 
-export const CustomTooltipSummary = ({ active, payload }: TooltipProps) => {
+export const CustomTooltipSummary = ({ active, payload, currYear }: TooltipProps & { currYear: number }) => {
     if (!active || !payload?.length) return null;
 
     // Recharts gives one entry per bar (so we extract both safely)
@@ -38,20 +38,21 @@ export const CustomTooltipSummary = ({ active, payload }: TooltipProps) => {
     const currentInv = current?.currentInvitations ?? 0;
     const prevInv = prev?.prevInvitations ?? 0;
 
+    // compact so it fits inside the narrow Draw Summary card
     return (
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-3 text-sm">
-            <p className="font-semibold text-gray-800 mb-2">{name}</p>
+        <div className="w-44 bg-white/95 border border-gray-200 rounded-lg shadow-sm p-2.5 text-xs text-left">
+            <p className="font-semibold text-gray-800 mb-1.5 leading-snug">{name}</p>
 
-            <p className="text-gray-600">
-                Current Year:{" "}
-                <span className="font-medium text-gray-800">
+            <p className="flex justify-between gap-2 text-gray-500">
+                {currYear}
+                <span className="font-medium text-gray-800 tabular-nums">
                     {currentValue.toLocaleString()} [{currentInv}]
                 </span>
             </p>
 
-            <p className="text-gray-600">
-                Previous Year:{" "}
-                <span className="font-medium text-gray-800">
+            <p className="flex justify-between gap-2 text-gray-500">
+                {currYear - 1}
+                <span className="font-medium text-gray-800 tabular-nums">
                     {prevValue.toLocaleString()} [{prevInv}]
                 </span>
             </p>
