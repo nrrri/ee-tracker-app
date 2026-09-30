@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import sql from "@/lib/db";
 import { createTables } from "@/lib/schema";
 
@@ -88,6 +89,10 @@ export async function GET(request: Request) {
         ON CONFLICT (draw_distribution_as_on) DO NOTHING
       `;
     }
+
+    // Rebuild the cached home page with the new data
+    revalidatePath("/");
+
     return Response.json({
       success: true,
       inserted: rounds.length,
