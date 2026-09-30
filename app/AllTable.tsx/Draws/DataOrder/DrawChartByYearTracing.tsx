@@ -153,7 +153,6 @@ export default function DrawChartByYearTracing({ drawData, poolData, drawOptions
             prev.includes(year) ? prev.filter(y => y !== year) : [...prev, year]
         );
     };
-
     return (
         <div className="w-full">
             <div className="flex justify-center px-4">
@@ -257,30 +256,6 @@ export default function DrawChartByYearTracing({ drawData, poolData, drawOptions
                                 ))}
                             </Bar>
 
-                            {/* LINES BY YEAR */}
-                            {years.map((year) => (
-                                <Line
-                                    key={year}
-                                    yAxisId="left"
-                                    type="linear"
-                                    dataKey={`year_${year}`}
-                                    name={`${year}`}
-                                    stroke={lineColors[year]}
-                                    strokeWidth={3}
-                                    connectNulls={true}
-                                >
-                                    {!isNarrow && (
-                                        <LabelList
-                                            dataKey={`year_${year}`}
-                                            position="top"
-                                            offset={10}
-                                            fill="#000"
-                                            fontSize={12}
-                                        />
-                                    )}
-                                </Line>
-                            ))}
-
                             {/* VIEWER'S CRS ONE YEAR AHEAD */}
                             {userScores.length > 0 && (
                                 <Line
@@ -315,6 +290,30 @@ export default function DrawChartByYearTracing({ drawData, poolData, drawOptions
                                     <LabelList dataKey="userCRS" content={userCrsLabel("userCRS", true)} />
                                 </Line>
                             )}
+
+                            {/* LINES BY YEAR */}
+                            {years.reverse().map((year) => (
+                                <Line
+                                    key={year}
+                                    yAxisId="left"
+                                    type="linear"
+                                    dataKey={`year_${year}`}
+                                    name={`${year}`}
+                                    stroke={lineColors[year]}
+                                    strokeWidth={3}
+                                    connectNulls={true}
+                                >
+                                    {!isNarrow && (
+                                        <LabelList
+                                            dataKey={`year_${year}`}
+                                            position="top"
+                                            offset={10}
+                                            fill="#000"
+                                            fontSize={12}
+                                        />
+                                    )}
+                                </Line>
+                            ))}
                         </ComposedChart>
                     </ChartContainer>
                 </div>
