@@ -245,6 +245,7 @@ export default function DrawChartByYearTracing({ drawData, poolData, drawOptions
                                 maxBarSize={18}
                                 radius={4}
                                 yAxisId="right"
+                                name={"Draw Size"}
                                 dataKey="drawSize"
                                 fill="#d1d1d1"
                             >
