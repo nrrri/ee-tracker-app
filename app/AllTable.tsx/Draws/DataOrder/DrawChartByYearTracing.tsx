@@ -2,7 +2,7 @@
 
 import { ChartContainer } from "@/components/ui/chart";
 import { FilterChip } from "@/components/FilterBox";
-import { Bar, CartesianGrid, Cell, ComposedChart, LabelList, Legend, Line, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, CartesianGrid, Cell, ComposedChart, LabelList, LabelProps, Legend, Line, Tooltip, XAxis, YAxis } from "recharts";
 import { useMemo, useState } from "react";
 import { CustomTooltipAnalysis } from "@/components/CustomTooltip";
 import FilterDropdown from "@/components/FilterDropdown";
@@ -76,6 +76,8 @@ export default function DrawChartByYearTracing({ drawData, poolData, drawOptions
             // same month/day in the latest year, so age and work experience reflect that date
             const drawDate = new Date(item.drawDateFull);
             const projectedDate = new Date(latestYear, drawDate.getMonth(), drawDate.getDate());
+            const nextYearDate = new Date(latestYear + 1, drawDate.getMonth(), drawDate.getDate());
+            const formatDate = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
             const filterCandidates = poolData.find((pool) =>
             (pool.drawDistributionAsOn === item.drawDistributionAsOn && item.drawName === 'Canadian Experience Class'
             ))
@@ -90,12 +92,57 @@ export default function DrawChartByYearTracing({ drawData, poolData, drawOptions
                 dateInPool: item.drawDistributionAsOn,
                 dateCutOff: item.drawCutOff,
                 userCRS: showUserCrs ? calculateCrs(crsProfile, projectedDate)?.total : undefined,
-                userCRSDate: projectedDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+                userCRSDate: formatDate(projectedDate),
+                // one year ahead: same date next year, older and with more Canadian experience
+                userCRSNext: showUserCrs ? calculateCrs(crsProfile, nextYearDate)?.total : undefined,
+                userCRSNextDate: formatDate(nextYearDate),
             };
         });
 
-    // keep the viewer's score line inside the left axis
-    const userScores = chartData.map(d => d.userCRS).filter((s): s is number => s !== undefined);
+    // keep both of the viewer's score lines inside the left axis
+    const userScores = chartData
+        .flatMap(d => [d.userCRS, d.userCRSNext])
+        .filter((s): s is number => s !== undefined);
+
+    // score tag on the first point and each step of a viewer line, not on every draw.
+    // this year: filled tag; next year: outlined tag. The higher line's tag sits above it and
+    // the lower line's below, so the two tags never collide (ties: this year above).
+    const userCrsLabel = (key: "userCRS" | "userCRSNext", filled: boolean) =>
+        function UserCrsLabel({ x, y, value, index }: LabelProps) {
+            const i = Number(index);
+            if (value === undefined || (i > 0 && chartData[i - 1]?.[key] === value)) return null;
+            const text = String(value);
+            const width = text.length * 8 + 12;
+            const current = chartData[i]?.userCRS ?? 0;
+            const next = chartData[i]?.userCRSNext ?? 0;
+            const above = filled ? current >= next : next > current;
+            const top = above ? Number(y) - 26 : Number(y) + 8;
+            return (
+                <g>
+                    <rect
+                        x={Number(x) - width / 2}
+                        y={top}
+                        width={width}
+                        height={18}
+                        rx={9}
+                        fill={filled ? USER_CRS_COLOR : "#ffffff"}
+                        stroke={USER_CRS_COLOR}
+                        strokeWidth={filled ? 0 : 1.5}
+                    />
+                    <text
+                        x={Number(x)}
+                        y={top + 9}
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                        fontSize={12}
+                        fontWeight={600}
+                        fill="#111827"
+                    >
+                        {text}
+                    </text>
+                </g>
+            );
+        };
     const leftDomain = [
         Math.min(minBalance(chartData), ...userScores.map(s => Math.floor((s - 10) / 10) * 10)),
         Math.max(maxBalance(chartData, addFilterType), ...userScores.map(s => Math.ceil((s + 10) / 10) * 10)),
@@ -233,52 +280,38 @@ export default function DrawChartByYearTracing({ drawData, poolData, drawOptions
                                 </Line>
                             ))}
 
-                            {/* VIEWER'S CRS, stepping on birthdays / work anniversaries */}
+                            {/* VIEWER'S CRS ONE YEAR AHEAD */}
+                            {userScores.length > 0 && (
+                                <Line
+                                    yAxisId="left"
+                                    type="stepAfter"
+                                    dataKey="userCRSNext"
+                                    name={`Your CRS (${latestYear + 1}, projected)`}
+                                    legendType="plainline"
+                                    stroke={USER_CRS_COLOR}
+                                    strokeWidth={2.5}
+                                    strokeDasharray="6 4"
+                                    dot={false}
+                                    activeDot={{ r: 4, fill: "#ffffff", stroke: USER_CRS_COLOR, strokeWidth: 2 }}
+                                >
+                                    <LabelList dataKey="userCRSNext" content={userCrsLabel("userCRSNext", false)} />
+                                </Line>
+                            )}
+
+                            {/* VIEWER'S CRS, stepping on birthdays / work anniversaries — drawn last so its tags stay on top */}
                             {userScores.length > 0 && (
                                 <Line
                                     yAxisId="left"
                                     type="stepAfter"
                                     dataKey="userCRS"
                                     name={`Your CRS (${latestYear})`}
+                                    legendType="plainline"
                                     stroke={USER_CRS_COLOR}
                                     strokeWidth={2.5}
-                                    strokeDasharray="6 4"
                                     dot={false}
                                     activeDot={{ r: 4, fill: USER_CRS_COLOR }}
                                 >
-                                    {/* label only the first point and each step, not every draw */}
-                                    <LabelList
-                                        dataKey="userCRS"
-                                        content={({ x, y, value, index }) => {
-                                            const i = Number(index);
-                                            if (value === undefined || (i > 0 && chartData[i - 1]?.userCRS === value)) return null;
-                                            const text = String(value);
-                                            const width = text.length * 8 + 12;
-                                            return (
-                                                <g>
-                                                    <rect
-                                                        x={Number(x) - width / 2}
-                                                        y={Number(y) - 26}
-                                                        width={width}
-                                                        height={18}
-                                                        rx={9}
-                                                        fill={USER_CRS_COLOR}
-                                                    />
-                                                    <text
-                                                        x={Number(x)}
-                                                        y={Number(y) - 17}
-                                                        textAnchor="middle"
-                                                        dominantBaseline="central"
-                                                        fontSize={12}
-                                                        fontWeight={600}
-                                                        fill="#111827"
-                                                    >
-                                                        {text}
-                                                    </text>
-                                                </g>
-                                            );
-                                        }}
-                                    />
+                                    <LabelList dataKey="userCRS" content={userCrsLabel("userCRS", true)} />
                                 </Line>
                             )}
                         </ComposedChart>

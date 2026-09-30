@@ -101,6 +101,16 @@ export const CustomTooltipAnalysis = ({
                 </p>
             )}
 
+            {data.userCRSNext !== undefined && (
+                <p className="text-gray-600">
+                    Your CRS on {data.userCRSNextDate} (projected):{" "}
+                    <span className="font-medium text-gray-800">{data.userCRSNext}</span>{" "}
+                    <span className={data.userCRSNext >= Number(data.drawCRS) ? "text-emerald-600" : "text-rose-600"}>
+                        ({data.userCRSNext >= Number(data.drawCRS) ? "+" : ""}{data.userCRSNext - Number(data.drawCRS)} vs cut-off)
+                    </span>
+                </p>
+            )}
+
             <p className="text-gray-600">
                 Draw Size:{" "}
                 <span className="font-medium text-gray-800">
